@@ -98,7 +98,6 @@
       name="Segundo_nombre"
       class="form-control input-shadow" 
       placeholder="Ingrese Segundo Nombre" 
-      required 
       autocomplete="given-name">
     <div class="form-control-position">
       <i class="fas fa-user"></i>
@@ -130,7 +129,7 @@
       type="text" 
       id="Segundo_apellido" 
       name="Segundo_apellido"
-      class="form-control input-shadow" placeholder="Ingrese Segundo apellido" required 
+      class="form-control input-shadow" placeholder="Ingrese Segundo apellido" 
       autocomplete="given-name">
     <div class="form-control-position">
       <i class="fas fa-user"></i>
@@ -138,21 +137,25 @@
   </div>
      </div>
     
-    <div class="form-group">
-  <label for="Rol">Cargo</label>
+<div class="form-group">
+  <label for="Cargo">Cargo</label>
   <div class="position-relative has-icon-right">
-    <input 
-      type="text" 
+    <select 
       id="Cargo" 
       name="Rol"
       class="form-control input-shadow" 
-      placeholder="Ingrese Rol/Cargo del usuario" required 
-      autocomplete="given-name">
+      required>
+      <option value="">Seleccione un cargo</option>
+      <option value="Med03">Médico</option>
+      <option value="Enf02">Enfermero</option>
+      <option value="Ter04">Terapeuta</option>
+      <option value="Aux01">Auxiliar</option>
+    </select>
     <div class="form-control-position">
       <i class="fas fa-user"></i>
     </div>
   </div>
-     </div>
+</div>
               
        <div class="form-group">
   <label for="correo">Correo</label>
