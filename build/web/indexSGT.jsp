@@ -97,8 +97,7 @@
       id="Segundo_nombre" 
       name="Segundo_nombre"
       class="form-control input-shadow" 
-      placeholder="Ingrese Segundo Nombre" 
-      required 
+      placeholder="Ingrese Segundo Nombre"
       autocomplete="given-name">
     <div class="form-control-position">
       <i class="fas fa-user"></i>
@@ -130,7 +129,7 @@
       type="text" 
       id="Segundo_apellido" 
       name="Segundo_apellido"
-      class="form-control input-shadow" placeholder="Ingrese Segundo apellido" required 
+      class="form-control input-shadow" placeholder="Ingrese Segundo apellido"
       autocomplete="given-name">
     <div class="form-control-position">
       <i class="fas fa-user"></i>
