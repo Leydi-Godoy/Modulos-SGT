@@ -31,11 +31,18 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public String saveUsuario(@ModelAttribute Usuario usuario, RedirectAttributes redirectAttributes) {
-        usuarioService.save(usuario);
-        redirectAttributes.addFlashAttribute("success", "Usuario guardado exitosamente");
-        return "redirect:/usuarios";
+public String saveUsuario(@ModelAttribute Usuario usuario,
+                          @RequestParam(value = "terminos", required = false) String terminos,
+                          RedirectAttributes redirectAttributes) {
+    if (terminos == null || !terminos.equals("aceptado")) {
+        redirectAttributes.addFlashAttribute("error", "Debe aceptar los términos y condiciones");
+        return "redirect:/usuarios/nuevo";
     }
+
+    usuarioService.save(usuario);
+    redirectAttributes.addFlashAttribute("success", "Usuario guardado exitosamente");
+    return "redirect:/usuarios";
+}
 
     @GetMapping("/editar/{id}")
     public String editForm(@PathVariable Long id, Model model) {
