@@ -1,60 +1,79 @@
 package com.sgturnos.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import com.sgturnos.security.CustomLoginSuccessHandler;
+import com.sgturnos.security.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.*;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.web.configuration.*;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private CustomLoginSuccessHandler loginSuccessHandler;
+    
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        UserDetailsService customUserDetailsService = null;
+        authProvider.setUserDetailsService(customUserDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/sgturnos/admin/**").hasRole("ADMIN")
+                .requestMatchers("/sgturnos/usuario/**").hasRole("USER")
                 .anyRequest().authenticated()
             )
-                
             .formLogin(form -> form
-                    .permitAll()
-            )
-                
-            .logout(logout -> logout
-                .logoutSuccessUrl("/login?logout")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
+                .loginPage("/sgturnos/login")
+                .loginProcessingUrl("/sgturnos/login")
+                .successHandler(loginSuccessHandler)
                 .permitAll()
             )
-            .rememberMe(remember -> remember
-                .key("uniqueAndSecret")
-                .tokenValiditySeconds(86400)
+            .logout(logout -> logout
+                .logoutUrl("/sgturnos/logout")
+                .logoutSuccessUrl("/sgturnos/login?logout")
+                .permitAll()
             );
-        
+
         return http.build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-    
-    @Bean
-public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-    UserDetails user = User.builder()
-            .username("admin")
-            .password(passwordEncoder.encode("admin123"))
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        // Usuario administrador en memoria
+        UserDetails admin = User.builder()
+            .username("admin")  // usuario fijo
+            .password(passwordEncoder().encode("admin123")) // contraseña codificada
             .roles("ADMIN")
             .build();
 
-    return new InMemoryUserDetailsManager(user);
-}
+        auth.inMemoryAuthentication()
+            .withUser(admin);
+
+        // Usuarios desde base de datos
+        auth.authenticationProvider(daoAuthProvider());
+    }
 }
