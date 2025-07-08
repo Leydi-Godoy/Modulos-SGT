@@ -16,18 +16,22 @@
                 </div>
                 <h3 class="card-title text-center py-3">Iniciar Sesión</h3>
 
-               <form th:action="@{/sgturnos/login}" method="post">
-    <input type="text" name="username" placeholder="Correo o usuario" required>
-    <input type="password" name="password" placeholder="Contraseña" required>
-    <button type="submit">Iniciar sesión</button>
-               </form>
-                
-                <div th:if="${param.error}">
-    <p style="color:red;">Usuario o contraseña incorrectos.</p>
+              <form th:action="@{/sgturnos/login}" method="post">
+    <div class="mb-3">
+        <input type="text" name="username" class="form-control" placeholder="Correo o usuario" required>
+    </div>
+    <div class="mb-3">
+        <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+</form>
+
+<div th:if="${param.error}" class="alert alert-danger mt-3" role="alert">
+    Usuario o contraseña incorrectos.
 </div>
 
-<div th:if="${param.logout}">
-    <p style="color:green;">Has cerrado sesión correctamente.</p>
+<div th:if="${param.logout}" class="alert alert-success mt-3" role="alert">
+    Has cerrado sesión correctamente.
 </div>
                 
             </div>

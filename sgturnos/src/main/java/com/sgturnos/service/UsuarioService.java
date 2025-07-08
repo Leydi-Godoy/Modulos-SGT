@@ -1,6 +1,7 @@
 package com.sgturnos.service;
 
 import com.sgturnos.model.Usuario;
+
 import java.util.List;
 
 public interface UsuarioService {

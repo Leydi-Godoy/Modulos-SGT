@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Usuario</title>
+    <title>Error de Rol</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container text-center mt-5">
-        <h1>Bienvenido Usuario</h1>
-        <p>Aquí podrás consultar tu malla de turnos, reportar novedades, etc.</p>
-        <a th:href="@{/sgturnos/logout}" class="btn btn-primary mt-3">Cerrar sesión</a>
+        <h1 class="text-danger">¡Error de Rol!</h1>
+        <p>No tienes un rol válido asignado. Contacta al administrador.</p>
+        <a href="/sgturnos/login" class="btn btn-primary mt-3">Volver al Login</a>
     </div>
 </body>
 </html>

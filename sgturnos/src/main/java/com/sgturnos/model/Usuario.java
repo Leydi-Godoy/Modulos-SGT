@@ -9,95 +9,56 @@ public class Usuario {
     @Column(name = "Id_usuario")
     private Long idUsuario;
 
-    @Column(name = "Primer_nombre")
+    @Column(name = "primer_nombre")
     private String primerNombre;
 
-    @Column(name = "Segundo_nombre")
+    @Column(name = "segundo_nombre")
     private String segundoNombre;
 
-    @Column(name = "Primer_apellido")
+    @Column(name = "primer_apellido")
     private String primerApellido;
 
-    @Column(name = "Segundo_apellido")
+    @Column(name = "segundo_apellido")
     private String segundoApellido;
 
     @Column(name = "Rol")
     private String rol;
 
-    @Column(name = "Correo")
+    @Column(name = "correo")
     private String correo;
 
-    @Column(name = "Contrasena")
+    @Column(name = "contrasena")
     private String contrasena;
 
     // Constructor vacío
     public Usuario() {}
 
     // Getters y setters
+    public Long getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(Long idUsuario) { this.idUsuario = idUsuario; }
 
-    public Long getIdUsuario() {
-        return idUsuario;
-    }
+    public String getPrimerNombre() { return primerNombre; }
+    public void setPrimerNombre(String primerNombre) { this.primerNombre = primerNombre; }
 
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
-    }
+    public String getSegundoNombre() { return segundoNombre; }
+    public void setSegundoNombre(String segundoNombre) { this.segundoNombre = segundoNombre; }
 
-    public String getPrimerNombre() {
-        return primerNombre;
-    }
+    public String getPrimerApellido() { return primerApellido; }
+    public void setPrimerApellido(String primerApellido) { this.primerApellido = primerApellido; }
 
-    public void setPrimerNombre(String primerNombre) {
-        this.primerNombre = primerNombre;
-    }
+    public String getSegundoApellido() { return segundoApellido; }
+    public void setSegundoApellido(String segundoApellido) { this.segundoApellido = segundoApellido; }
 
-    public String getSegundoNombre() {
-        return segundoNombre;
-    }
+    public String getRol() { return rol; }
+    public void setRol(String rol) { this.rol = rol; }
 
-    public void setSegundoNombre(String segundoNombre) {
-        this.segundoNombre = segundoNombre;
-    }
+    public String getCorreo() { return correo; }
+    public void setCorreo(String correo) { this.correo = correo; }
 
-    public String getPrimerApellido() {
-        return primerApellido;
-    }
+    public String getContrasena() { return contrasena; }
+    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
 
-    public void setPrimerApellido(String primerApellido) {
-        this.primerApellido = primerApellido;
-    }
-
-    public String getSegundoApellido() {
-        return segundoApellido;
-    }
-
-    public void setSegundoApellido(String segundoApellido) {
-        this.segundoApellido = segundoApellido;
-    }
-
-    public String getRol() {
-        return rol;
-    }
-
-    public void setRol(String rol) {
-        this.rol = rol;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
-    public String getContrasena() {
-        return contrasena;
-    }
-
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
+    public Object getId() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
-
-

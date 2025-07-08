@@ -1,6 +1,5 @@
 package com.sgturnos.security;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -17,16 +16,21 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication)
-            throws IOException, ServletException {
+            throws IOException {
 
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
         if (roles.contains("ROLE_ADMIN")) {
-            response.sendRedirect("/sgturnos/admin/dashboard");
-        } else if (roles.contains("ROLE_USER")) {
-            response.sendRedirect("/sgturnos/usuario/dashboard");
+            response.sendRedirect("/sgturnos/dashboard_admin");
+        } else if (
+                roles.contains("ROLE_AUX") ||
+                roles.contains("ROLE_ENF") ||
+                roles.contains("ROLE_MED") ||
+                roles.contains("ROLE_TER")
+        ) {
+            response.sendRedirect("/sgturnos/dashboard_usuario");
         } else {
-            response.sendRedirect("/sgturnos/login?error");
+            response.sendRedirect("/sgturnos/error_rol");
         }
     }
 }

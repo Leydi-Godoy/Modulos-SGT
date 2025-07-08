@@ -2,31 +2,20 @@ package com.sgturnos.service;
 
 import com.sgturnos.model.Usuario;
 import com.sgturnos.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class UsuarioServiceImpl implements UsuarioService {
-    private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, 
-            PasswordEncoder passwordEncoder) {
-        this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    @Override
-    public Usuario save(Usuario usuario) {
-        if (usuario.getContrasena() != null && !usuario.getContrasena().isEmpty()) {
-            usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-        }
-        return usuarioRepository.save(usuario);
-    }
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public List<Usuario> findAll() {
@@ -35,14 +24,34 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario findById(Long id) {
-        return usuarioRepository.findById(id).orElseThrow(()-> new RuntimeException("Usuario no encontrado con id: " + id));
+        return usuarioRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Usuario save(Usuario usuario) {
+        if (usuario.getIdUsuario() != null) {
+            Usuario usuarioExistente = usuarioRepository.findById(usuario.getIdUsuario()).orElse(null);
+            if (usuarioExistente != null) {
+                if (!passwordEncoder.matches(usuario.getContrasena(), usuarioExistente.getContrasena())) {
+                    usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+                } else {
+                    usuario.setContrasena(usuarioExistente.getContrasena());
+                }
+            } else {
+                usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+            }
+        } else {
+            usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+        }
+
+        return usuarioRepository.save(usuario);
     }
 
     @Override
     public void deleteById(Long id) {
         usuarioRepository.deleteById(id);
     }
-    
+
     @Override
     public Usuario findByCorreo(String correo) {
         return usuarioRepository.findByCorreo(correo);
