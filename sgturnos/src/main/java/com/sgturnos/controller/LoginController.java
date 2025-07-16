@@ -12,7 +12,7 @@ public class LoginController {
 
     @GetMapping("/sgturnos/login")
     public String mostrarFormularioLogin() {
-        return "login/login"; // tu template
+        return "login"; // tu template
     }
 
     @GetMapping("/dashboard_admin")
@@ -25,8 +25,8 @@ public class LoginController {
         return "login/dashboard_usuario";
     }
 
-    @GetMapping("/sgturnos/error_rol")
+    @GetMapping("/login/error_rol")
     public String errorRol() {
-        return "login/error_rol";
-    }
+    return "login/error_rol";
+  }
 }

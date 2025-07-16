@@ -30,7 +30,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         ) {
             response.sendRedirect("/sgturnos/dashboard_usuario");
         } else {
-            response.sendRedirect("/sgturnos/error_rol");
+            response.sendRedirect("/sgturnos/login/error_rol");
         }
     }
 }

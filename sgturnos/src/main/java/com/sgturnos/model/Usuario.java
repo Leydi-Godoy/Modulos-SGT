@@ -56,9 +56,6 @@ public class Usuario {
     public void setCorreo(String correo) { this.correo = correo; }
 
     public String getContrasena() { return contrasena; }
-    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
-
-    public Object getId() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setContrasena(String contrasena) { this.contrasena = contrasena; 
     }
 }

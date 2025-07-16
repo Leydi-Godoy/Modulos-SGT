@@ -43,6 +43,10 @@ public class CustomUserDetailsService implements UserDetailsService {
             case "ter04":
                 rolSpring = "ROLE_TER";
                 break;
+            case "adm05":
+                rolSpring = "ROLE_ADMIN";
+                break;
+                
                 default:
     throw new UsernameNotFoundException("Rol no válido: " + rolEnBd);
         }
@@ -53,7 +57,7 @@ if (nombreRol == null || nombreRol.isEmpty()) {
 }
 
 List<GrantedAuthority> authorities = new ArrayList<>();
-authorities.add(new SimpleGrantedAuthority("ROLE_" + nombreRol.toUpperCase()));
+authorities.add(new SimpleGrantedAuthority(rolSpring));
 
 return new User(
     usuario.getCorreo(),
