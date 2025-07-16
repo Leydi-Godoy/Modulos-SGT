@@ -35,51 +35,37 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public String saveUsuario(@ModelAttribute Usuario usuario,
-                              @RequestParam(value = "terminos", required = false) String terminos,
-                              RedirectAttributes redirectAttributes) {
+public String saveUsuario(@ModelAttribute Usuario usuario,
+                          @RequestParam(value = "terminos", required = false) String terminos,
+                          RedirectAttributes redirectAttributes) {
 
-        // Verificamos si aceptaron los términos y condiciones
-        if (terminos == null || !terminos.equals("aceptado")) {
-            redirectAttributes.addFlashAttribute("error", "Debe aceptar los términos y condiciones");
-            return "redirect:/usuarios/nuevo";
-        }
+    // Verificamos si aceptaron los términos y condiciones
+    if (terminos == null || !terminos.equals("aceptado")) {
+        redirectAttributes.addFlashAttribute("error", "Debe aceptar los términos y condiciones");
+        return "redirect:/usuarios/nuevo";
+    }
 
-        // Verificamos si estamos editando (usuario ya tiene ID)
-        if (usuario.getIdUsuario() != null) {
-            Usuario usuarioExistente = usuarioService.findById(usuario.getIdUsuario());
+    if (usuario.getIdUsuario() != null) {
+        Usuario usuarioExistente = usuarioService.findById(usuario.getIdUsuario());
 
-            // Si la contraseña del formulario es diferente a la guardada en BD, significa que la cambiaron
+        if (usuarioExistente != null) {
             if (!usuario.getContrasena().equals(usuarioExistente.getContrasena())) {
                 String hashedPassword = passwordEncoder.encode(usuario.getContrasena());
                 usuario.setContrasena(hashedPassword);
+            } else {
+                usuario.setContrasena(usuarioExistente.getContrasena());
             }
         } else {
-            // Si es un usuario nuevo, siempre se encripta la contraseña
             String hashedPassword = passwordEncoder.encode(usuario.getContrasena());
             usuario.setContrasena(hashedPassword);
         }
-
-        // Guardamos el usuario con el rol seleccionado, no es necesario reasignar el rol aquí
-        usuarioService.save(usuario);
-        redirectAttributes.addFlashAttribute("success", "Usuario guardado exitosamente");
-        return "redirect:/usuarios";
+    } else {
+        String hashedPassword = passwordEncoder.encode(usuario.getContrasena());
+        usuario.setContrasena(hashedPassword);
     }
 
-    @GetMapping("/editar/{id}")
-    public String editForm(@PathVariable Long id, Model model) {
-        // Cargamos el usuario existente para la edición
-        model.addAttribute("usuario", usuarioService.findById(id));
-        // También pasamos todos los roles disponibles para la edición
-        model.addAttribute("roles", new String[]{"aux01", "enf02", "med03", "ter04", "adm05"});
-        return "usuarios/form";
-    }
-
-    @GetMapping("/eliminar/{id}")
-    public String deleteUsuario(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        // Eliminar el usuario
-        usuarioService.deleteById(id);
-        redirectAttributes.addFlashAttribute("success", "Usuario eliminado exitosamente");
-        return "redirect:/usuarios";
-    }
+    usuarioService.save(usuario);
+    redirectAttributes.addFlashAttribute("success", "Usuario guardado exitosamente");
+    return "redirect:/usuarios";
+}
 }
