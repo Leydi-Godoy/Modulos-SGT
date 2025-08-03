@@ -3,13 +3,15 @@
 <head>
     <title th:text="${usuario.idUsuario == null ? 'Nuevo Usuario' : 'Editar Usuario'}">Registro de Usuario</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/animac.css}">
     <link rel="stylesheet" th:href="@{/estilos.css}">
+    <link rel="stylesheet" th:href="@{/animac.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<body class="bg-theme2">
 
-    <div class="container my-5">
+    
+</head>
+<body>
+
+    <div class="container fondo-difuminado text-center mt-5">
         <div class="card card-authentication1 mx-auto">
             <div class="card-body">
                 <div class="text-center">
@@ -80,13 +82,9 @@
         <label for="rol">Cargo</label>
         <div class="position-relative has-icon-right">
             <select id="rol" th:field="*{rol}" class="form-control input-shadow" required>
-                <option value="">Seleccione un cargo</option>
-                <option value="aux01">Auxiliar</option>
-                <option value="enf02">Enfermero</option>
-                <option value="med03">Médico</option>
-                <option value="ter04">Terapeuta</option>
-                <option value="adm05">Administrador</option> <!-- Opción para el rol Admin -->
-            </select>
+    <option value="">Seleccione un cargo</option>
+    <option th:each="r : ${roles}" th:value="${r.idRol}" th:text="${r.rol}"></option>
+           </select>
             <div class="form-control-position">
                 <i class="fas fa-user-tag"></i>
             </div>
@@ -127,7 +125,7 @@
                             th:text="${usuario.idUsuario == null ? 'Registrarse' : 'Actualizar'}">Registrarse</button>
                     <a th:href="@{/usuarios}" class="btn btn-secondary d-block mx-auto mt-2">Cancelar</a>
                     
-                    <a th:href="@{/sgturnos/dashboard_admin}" class="btn btn-secondary d-block mx-auto mt-2">Volver al Dashboard</a>
+                    <a th:href="@{/dashboard_admin}" class="btn btn-secondary d-block mx-auto mt-2">Volver al Dashboard</a>
                 </form>
             </div>
         </div>

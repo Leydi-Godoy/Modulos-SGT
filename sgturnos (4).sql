@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-07-2025 a las 18:02:22
+-- Tiempo de generación: 03-08-2025 a las 05:56:06
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -28,21 +28,9 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `asignacion_turno` (
-  `Id_turno` int(20) NOT NULL,
+  `id_turno` bigint(20) NOT NULL,
   `Id_empleado` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `asignacion_turno`
---
-
-INSERT INTO `asignacion_turno` (`Id_turno`, `Id_empleado`) VALUES
-(1, '1105105105'),
-(2, '1106106106'),
-(3, '1107107107'),
-(4, '1108108108'),
-(5, '1109109109'),
-(6, '1102102102');
 
 -- --------------------------------------------------------
 
@@ -92,22 +80,6 @@ CREATE TABLE `empleado` (
   `Id_rol` varchar(10) NOT NULL,
   `id_usuario` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `empleado`
---
-
-INSERT INTO `empleado` (`Id_empleado`, `Id_rol`, `id_usuario`) VALUES
-('1101101101', 'aux01', 1101101101),
-('1102102102', 'med03', 1102102102),
-('1103103103', 'ter04', 1103103103),
-('1104104104', 'aux01', 1104104104),
-('1105105105', 'med03', 1105105105),
-('1106106106', 'ter04', 1106106106),
-('1107107107', 'enf02', 1107107107),
-('1108108108', 'enf02', 1108108108),
-('1109109109', 'enf02', 1109109109),
-('1110110110', 'med03', 1110110110);
 
 -- --------------------------------------------------------
 
@@ -184,20 +156,6 @@ CREATE TABLE `novedades` (
   `Id_empleado` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `novedades`
---
-
-INSERT INTO `novedades` (`Id_novedad`, `Id_tipo_novedad`, `Fecha_de_reporte`, `id_estado_nov`, `Id_empleado`) VALUES
-('1', 'vac01', '2025-03-16', '01_APRO', '1101101101'),
-('2', 'cal02', '2025-03-16', '02_RECH', '1102102102'),
-('3', 'inc03', '2025-03-17', '01_APRO', '1103103103'),
-('4', 'cap04', '2025-03-22', '03_PEND', '1104104104'),
-('5', 'ext05', '2025-03-15', '01_APRO', '1107107107'),
-('6', 'cam_t06', '2025-03-16', '01_APRO', '1108108108'),
-('7', 'per07', '2025-03-17', '02_RECH', '1109109109'),
-('8', 'cam_h08', '2025-03-22', '01_APRO', '1110110110');
-
 -- --------------------------------------------------------
 
 --
@@ -215,11 +173,11 @@ CREATE TABLE `rol` (
 --
 
 INSERT INTO `rol` (`Id_rol`, `Rol`, `Id_departamento`) VALUES
-('adm05', 'admin', 'D003'),
-('aux01', '', 'enfer01'),
-('enf02', '', 'enfer01'),
-('med03', '', 'medic02'),
-('ter04', '', 'eqreh03');
+('adm05', 'ADMINISTRADOR', 'D003'),
+('aux01', 'AUXILIAR', 'enfer01'),
+('enf02', 'ENFERMERO', 'enfer01'),
+('med03', 'MEDICO', 'medic02'),
+('ter04', 'TERAPIA', 'eqreh03');
 
 -- --------------------------------------------------------
 
@@ -275,7 +233,7 @@ INSERT INTO `tipo_novedad` (`Id_tipo_novedad`, `Novedad`) VALUES
 --
 
 CREATE TABLE `turno` (
-  `Id_turno` int(20) NOT NULL,
+  `id_turno` bigint(20) NOT NULL,
   `Fecha_ini` date NOT NULL,
   `Fecha_fin` date NOT NULL,
   `Id_horario` varchar(20) NOT NULL
@@ -285,7 +243,7 @@ CREATE TABLE `turno` (
 -- Volcado de datos para la tabla `turno`
 --
 
-INSERT INTO `turno` (`Id_turno`, `Fecha_ini`, `Fecha_fin`, `Id_horario`) VALUES
+INSERT INTO `turno` (`id_turno`, `Fecha_ini`, `Fecha_fin`, `Id_horario`) VALUES
 (1, '2025-04-15', '2025-04-15', 'h01'),
 (2, '2025-04-16', '2025-04-17', 'h02'),
 (3, '2025-04-17', '2025-04-17', 'h01'),
@@ -305,7 +263,7 @@ CREATE TABLE `usuario` (
   `segundo_nombre` varchar(255) DEFAULT NULL,
   `primer_apellido` varchar(255) DEFAULT NULL,
   `segundo_apellido` varchar(255) DEFAULT NULL,
-  `Rol` varchar(255) DEFAULT NULL,
+  `Id_rol` varchar(20) DEFAULT NULL,
   `correo` varchar(255) DEFAULT NULL,
   `contrasena` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -314,30 +272,32 @@ CREATE TABLE `usuario` (
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`Id_usuario`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `Rol`, `correo`, `contrasena`) VALUES
-(1101101101, 'yuliy', 'paola', 'daza', 'oviedo', 'aux01', 'yuliypdaza@paliacare.com', '$2a$10$pTDfCsKcnPEWxzF/Hs3bAOxdhQXxrmf313U4lWZbtp7wFiMEmdggO'),
-(1102102102, 'Melissa', 'Andrea', 'Solano', 'Patiño', 'med03', 'melissasolano@paliacare.com', '$2a$10$mzj9URypo4AZjIhy9ZyzGuidK959/ZsyG4W8nAhhznFtfZv3ThKsW'),
-(1103103103, 'angelica', 'milena', 'prada', 'cañon', 'ter04', 'angelicaprada@paliacare.com', '$2a$10$ikCXdfOd32EqLpOyMuEIXu6dTicVUQa6QMHK4Ttlp41H2zBAjq/5W'),
-(1104104104, 'jesus', 'daniel', 'beltran', 'rodriguez', 'aux01', 'jesusbeltran@paliacare.com', '$2a$10$7czEgjKPl1P27P96Gn7qfe8JHup9H68Zd9cYil4dRJ8od8NuejpM.'),
-(1105105105, 'carlos', 'andres', 'rodriguez', 'ochoa', 'med03', 'carlosrodriguez@paliacare.com', '$2a$10$e9rmj7rc4JQep7LQGgRzzeR7KhF88C95.A2AZtWaJ1WtvV/3TIbKy'),
-(1106106106, 'genny', 'carolina', 'murcia', 'vargas', 'ter04', 'gennymurcia@paliacare.com', '$2a$10$zFfLM9/Ar2tcuxvkygwjAelpH0wHdKJnRgp0Bn/G2EWbo3qXCCQF2'),
-(1107107107, 'jenny', 'andrea', 'martinez', 'heredia', 'enf02', 'jennyamartinez@paliacare.com', '$2a$10$d4CB5EUfKscVqBkCTrSHK.YBn9yLmVk.wyXWjoAhDMT6ry7s8irc2'),
-(1108108108, 'maria', 'camila', 'barajas', 'lopez', 'enf02', 'mariacbarajas@palicare.com', '$2a$10$9niubPkswtFWoLaVz1aeS.jFgQNnVQfkSh7RTDkS0VfDPF/EocqNe'),
-(1109109109, 'armando', 'stiven', 'silva', 'rodriguez', 'enf02', 'armandossilva@paliacare.com', '$2a$10$vVsxwlhU6k9FJHVOdr6o4OSJzvYx6gbrim2FwBHHxsfLY9PxSVVJq'),
-(1110110110, 'Monica', 'Patricia', 'Pinilla', 'Castro', 'med03', 'monicappinilla@paliacare.com', '$2a$10$xxgocx6ZKvYw.VQPqIZfBe8YwbGS/oyGCOEwrn/nDFi4.6Ua7N4n.'),
-(1110110111, 'Camila', 'Andrea', 'Vergara', 'Caro', 'Aux01', 'camilavergara@paliacare.com', '$2a$10$waUZwdyehuYzFn2sy.mY4eg3GaF19txmiT.TzMR1QP4D2/Gk8UAfq'),
-(1110110112, 'Andres', 'Felipe', 'Castro', 'Polo', 'Aux01', 'andrescastro@paliacare.com', '$2a$10$lsrL20u.eVgXkmOMS.lt5eImQofA/YmKnnnbCrUxOH5bBz7h.VGuK'),
-(1110110113, 'Julia', 'Fernanda', 'Araujo', 'Henao', 'ter04', 'juliaaraujo@paliacare.com', '$2a$10$mCb8ir96XG9l0FJ1KgTJtu3vHhbw2XMC1jSJyWwuXcaPkJ1JXzL8i'),
-(1110110114, 'Juana', 'Carolina', 'Lopez', 'Montes', 'Aux01', 'juanalopez@paliacare.com', '$2a$10$2dtTywdtoxILF.4Q6aFcn.ynbdnREm3p8jr3uKInVRg0kCQfu3pQ6'),
-(1110110115, 'Daniela', 'Carolina', 'Carvajal', 'Rio', 'Aux01', 'danielacarvajal@paliacare.com', '$2a$10$OOeUBculU04Wp.g.WnwqQOaekvwJD5AAoNQPC7xLzFcrIytgOK.tW'),
-(1110110116, 'Veronica', 'Sofia', 'Cantor', 'Jimenez', 'Aux01', 'veronicacantor@paliacare.com', '$2a$10$6wkVozJ09LLVTXSV8sgpKukIWVPpJ/AA9Mm/yJv5COH9Da87lvgXG'),
-(1110110117, 'Carla', 'Antonia', 'Munoz', 'Alvarez', 'Aux01', 'carlamunoz@paliacare.com', '$2a$10$s1Hup4wtgJ7gp/Hl/rqFiuvYDu6T2xDKn1ztaK.ugWJsou/49cHWS'),
-(1110110118, 'Patricia', '', 'Paternina', '', 'Aux01', 'patriciapaternina@paliacare.com', '$2a$10$cLQgU5d/91S1ZZ.JhU1dc.LVCv6ByYcnjbUrc.vWEWIYvkPVm3DZS'),
-(1110110120, 'Santiago', 'Jose', 'Cardona', NULL, 'adm05', 'santiagocardona@paliacare.com', '$2b$12$GzeJyCS0qfaB0zdxwaNhIODP/LsWLfpJ2sIM9tv6V.U4HlBcMgWq.'),
-(1110110122, 'Mauricia', '', 'Panqueva', 'Rios', 'ter04', 'mauriciapanqueva@paliacare.com', '$2a$10$hBfjTixtNzDmECGbwdoWI.QMUitcE9/b4lBN/D7E5zczwjY6quNDG'),
-(1110110123, 'Erika', 'Amanda', 'Suarez', 'Parra', 'med03', 'amandasuarez@paliacare.com', '$2a$10$rTuHtNaTjR8cx3ZnCnBNkOiJeqB7uPF5jBPIRqRZdtg0z3LzdLqu2'),
-(1110110124, 'Yajaira', 'Paola', 'Rangel', 'Roa', 'aux01', 'yajairarangel@paliacare.com', '$2a$10$0NFUERT/0kh8vnKJW9g0e.KTrKge6sD/Ir0qa95ZhbgHguG2DpQ4i'),
-(1110110125, 'Sandy', 'Lorena', 'Paez', 'Soto', 'med03', 'sandypaez@paliacare.com', '$2a$10$YXKkg2gZNNFxmr/WWXQqDeMyC9LEd7n4r2RS63Jw8rA4ZhA0kHZjC');
+INSERT INTO `usuario` (`Id_usuario`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `Id_rol`, `correo`, `contrasena`) VALUES
+(80101476, 'Edisson', 'Andrés', 'Taborda', 'Reyes', 'adm05', 'edissontaborda@paliacare.com', '$2a$10$TNNqfKXw.NYc5GwJiJ5pB.k1Sdfam8Jqt95GTyLvd0DfR18HZvcV6'),
+(110681104, 'Genny', 'Carolina', 'Murcia', 'Vargas', 'ter04', 'gennymurcia@paliacare.com', '$2a$10$T3O/m/xNp18oXsm4o85QyeX4o5zyhiWrFu7JbLiypLe6mF76h832O'),
+(1101101101, 'Yuliy', 'Paola', 'Daza', 'Oviedo', 'aux01', 'yuliydaza@paliacare.com', '$2a$10$kQ/V.vkCHYq..xPW5/a2feZouwN.j5K/8kzgSkDNosVUBTooeQQQC'),
+(1102102101, 'Melissa', 'Andrea', 'Solano', 'Patiño', 'med03', 'melissasolano@paliacare.com', '$2a$10$dr/bUSh2EYUeeNbYqNtQuOHD.YXwsJofP5e2Q7GEHONKSUcW8qsVq'),
+(1103103101, 'Angelica', 'Milena', 'Prada', 'Cañón', 'ter04', 'angelicaprada@paliacare.com', '$2a$10$21A6rXqQFXZ9gFYX.Wqs9uFbV847yBlRDF0acrOh75Ayh7PhA7pEe'),
+(1104104101, 'Jesús', 'Daniel', 'Beltrán', 'Rodríguez', 'aux01', 'jesusbeltran@paliacare.com', '$2a$10$NVlLIr1vOfQqebqW7aZmC.SHOGsUYhUw.yBWaWmVeaxPIyFqALeku'),
+(1104774847, 'Leydi', 'Cecilia', 'Godoy', 'Ortiz', 'adm05', 'leydigodoy@paliacare.com', '$2a$10$D3Yu77JIOqBCG6uMz9fdOubRZwAbLSQR0oRSIyeA6t7Jipbqnmxky'),
+(1105105104, 'Carlos', 'Andrés', 'Rodríguez', 'Ochoa', 'med03', 'carlosrodriguez@paliacare.com', '$2a$10$aGwJ5dRA.yJVEESep6UJQuJ2idQemauoDK5ZQaZirJZyQXqWYaY/2'),
+(1107107107, 'Jenny', 'Andrea', 'Martinez', 'Heredia', 'enf02', 'jennymartinez@paliacare.com', '$2a$10$ItlJPq9yAWRaQVti1z55re/rJQT60oVVRHwL4dQTpXl4W8lt44wYO'),
+(1108108104, 'María', 'Camila', 'barajas', 'López', 'enf02', 'mariabarajas@paliacare.com', '$2a$10$lc1T7Qt/tFr0d4wuB2pREOyP4.h7U/wzgaXIKs586Nkym9h6DL/S2'),
+(1109109101, 'Armando', 'Stiven', 'Silva', 'Rodríguez', 'enf02', 'armandosilva@paliacare.com', '$2a$10$fM9JpEYEV5v4moKFowlgZu9w1xT26/S6CYhgbuaZ4mE9kP/CrQ0ia'),
+(1110101110, 'Mónica', 'Patricia', 'Pinilla', 'Castro', 'aux01', 'monicapinilla@paliacare.com', '$2a$10$YAHt9viHu9Dowld6r0qHye6utBzgYd7z4RkVHIj506DYZNF2btjye'),
+(1110110111, 'Camila', 'Andrea', 'Vergara', 'Caro', 'aux01', 'camilavergara@paliacare.com', '$2a$10$7P3iAyrE1d4gwuchyCbyZ.3d279vUqzN43KpqpNA3hfQyAKea86iq'),
+(1110110112, 'Andrés', 'Felipe', 'Castro', 'Polo', 'aux01', 'andrescastro@paliacare.com', '$2a$10$yKym7PQ5V3g8Yo3xv8mc8uew5y1BugU3otGujoocLNGtqzMm1IsTi'),
+(1110110113, 'Julia', 'Fernanda', 'Araujo', 'Henao', 'ter04', 'juliaaraujo@paliacare.com', '$2a$10$UZG/0uk/oOjv4Ch.lsJfbOr0ucygCFr9v8M74ezKO6DOsHLBDGyKm'),
+(1110110114, 'Juana', 'Carolina', 'López', 'Montes', 'aux01', 'juanalopez@paliacare.com', '$2a$10$wwnvmlh6pg5EzKGXE6uEFub5MLousNCWjHAQ74b2eO1DVYhS9stP6'),
+(1110110115, 'Daniela', 'Carolina', 'Carvajal', 'Rio', 'aux01', 'danielacarvajal@paliacare.com', '$2a$10$hJP/KUXFzjoukzcS114lP.6WcwZpHlnw.2pPMUa67RNTAXTAxUzuu'),
+(1110110116, 'Verónica', 'Sofia', 'Cantor', 'Jiménez', 'aux01', 'veronicacantor@paliacare.com', '$2a$10$crhPEt/e3cIrKyH4dm4FGu4lXFP4pcJrwRtm3sAbsKJc6qr71x.Kq'),
+(1110110117, 'Carla', 'Antonia', 'Muñoz', 'Álvarez', 'aux01', 'carlamunoz@paliacare.com', '$2a$10$BjW0NXOa6i5oR0R7s8/hNe7Pf97knUJhixwVnbEdQynhSHk.Cn3NS'),
+(1110110118, 'Patricia', NULL, 'Paternina', NULL, 'aux01', 'patriciapaternina@paliacare.com', '$2a$10$u/aKSP6Mx3hroVnsi1Con.OxFjlFwcd./oXbAEl1p.KMWaFxou/jq'),
+(1110110120, 'Santiago', 'Jose', 'Cardona', NULL, 'adm05', 'santiagocardona@paliacare.com', '$2a$10$pKbtPq6KyM0EKUbtwmqUROKmAsS3o.b..KDTBbUNkkaVnibu1YWWm'),
+(1110110121, 'Marcela', NULL, 'Panqueva', 'Rios', 'ter04', 'marcelapanqueva@paliacare.com', '$2a$10$Ae2/xw/Xoe80POlyxgQ5SuYUdehCditbX.w50rlFSYzgIup3K23Bm'),
+(1110110122, 'Erika', 'Amanda', 'Suarez', 'Parra', 'med03', 'amandasuarez@paliacare.com', '$2a$10$62f.794jr3Z2GD.LGK31zOV4TTJuJIV159O8IU1bBjwmwAfzUd4di'),
+(1110110142, 'Yajaira', 'Paola', 'Rangel', 'Roa', 'aux01', 'yajairarangel@paliacare.com', '$2a$10$dX5yc0PZGKyLlg1pllcV2ujmEIuJOTErIGmH0c92XBqPJnj/OEVb6'),
+(1110110146, 'Sandy', 'Lorena', 'Páez', 'Soto', 'med03', 'sandypaez@paliacare.com', '$2a$10$kAU6OdSpGnFTLhdntDHOt.hVxlX41JpTYp6rnQWovQf5hSqTEM5SO');
 
 --
 -- Índices para tablas volcadas
@@ -347,7 +307,7 @@ INSERT INTO `usuario` (`Id_usuario`, `primer_nombre`, `segundo_nombre`, `primer_
 -- Indices de la tabla `asignacion_turno`
 --
 ALTER TABLE `asignacion_turno`
-  ADD PRIMARY KEY (`Id_turno`,`Id_empleado`),
+  ADD PRIMARY KEY (`id_turno`,`Id_empleado`),
   ADD KEY `Id_empleado` (`Id_empleado`);
 
 --
@@ -423,7 +383,7 @@ ALTER TABLE `tipo_novedad`
 -- Indices de la tabla `turno`
 --
 ALTER TABLE `turno`
-  ADD PRIMARY KEY (`Id_turno`),
+  ADD PRIMARY KEY (`id_turno`),
   ADD KEY `FK_TURNO_HORARIO` (`Id_horario`);
 
 --
@@ -431,7 +391,17 @@ ALTER TABLE `turno`
 --
 ALTER TABLE `usuario`
   ADD PRIMARY KEY (`Id_usuario`),
-  ADD KEY `FK_USUARIO_ROL` (`Rol`);
+  ADD KEY `fk_usuario_rol` (`Id_rol`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `turno`
+--
+ALTER TABLE `turno`
+  MODIFY `id_turno` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas
@@ -441,7 +411,7 @@ ALTER TABLE `usuario`
 -- Filtros para la tabla `asignacion_turno`
 --
 ALTER TABLE `asignacion_turno`
-  ADD CONSTRAINT `asignacion_turno_ibfk_1` FOREIGN KEY (`Id_turno`) REFERENCES `turno` (`Id_turno`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `asignacion_turno_ibfk_1` FOREIGN KEY (`id_turno`) REFERENCES `turno` (`id_turno`),
   ADD CONSTRAINT `asignacion_turno_ibfk_2` FOREIGN KEY (`Id_empleado`) REFERENCES `empleado` (`Id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -483,7 +453,7 @@ ALTER TABLE `turno`
 -- Filtros para la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  ADD CONSTRAINT `FK_USUARIO_ROL` FOREIGN KEY (`Rol`) REFERENCES `rol` (`Id_rol`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_usuario_rol` FOREIGN KEY (`Id_rol`) REFERENCES `rol` (`Id_rol`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

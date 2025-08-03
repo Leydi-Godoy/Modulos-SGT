@@ -1,32 +1,42 @@
 package com.sgturnos.controller;
 
-import com.sgturnos.model.Usuario;
-import com.sgturnos.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class LoginController {
-
-    @GetMapping("/sgturnos/login")
-    public String mostrarFormularioLogin() {
-        return "login"; // tu template
+    
+     @GetMapping("/")
+    public String redirigirInicio() {
+        return "redirect:/login";
     }
 
-    @GetMapping("/dashboard_admin")
-    public String dashboardAdmin() {
-        return "login/dashboard_admin";
-    }
+    @GetMapping("/login")
+    public String mostrarLogin(@RequestParam(value = "error", required = false) String error,
+                                         @RequestParam(value = "logout", required = false) String logout,
+                                         @RequestParam(value = "sin_permiso", required = false) String sinPermiso,
+                                         Model model) {
 
-    @GetMapping("/dashboard_usuario")
-    public String dashboardUsuario() {
-        return "login/dashboard_usuario";
-    }
+        if (error != null) {
+            model.addAttribute("mensaje", "Usuario o contraseña incorrectos.");
+        }
 
-    @GetMapping("/login/error_rol")
+        if (logout != null) {
+            model.addAttribute("mensaje", "Has cerrado sesión correctamente.");
+        }
+
+        if (sinPermiso != null) {
+            model.addAttribute("mensaje", "No tienes permiso para acceder a esa sección.");
+        }
+
+        return "comunes/login"; // Carga login.html desde templates
+        }
+    
+    
+    @GetMapping("/error_rol")
     public String errorRol() {
-    return "login/error_rol";
-  }
+        return "comunes/error_rol";
+    }
 }

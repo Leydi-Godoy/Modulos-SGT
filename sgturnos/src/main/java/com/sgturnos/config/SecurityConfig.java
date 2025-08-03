@@ -7,8 +7,9 @@ import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.*;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -18,14 +19,15 @@ public class SecurityConfig {
 
     @Autowired
     private CustomLoginSuccessHandler successHandler;
-
+    
+    
     @Bean
     public CustomUserDetailsService userDetailsService() {
         return new CustomUserDetailsService();
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -38,37 +40,55 @@ public class SecurityConfig {
     }
 
     @Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-        .authenticationProvider(daoAuthenticationProvider())
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers(
-                "/sgturnos/login",
-                "/sgturnos/login?error",
-                "/sgturnos/login?logout",
-                "/sgturnos/error_rol",
-                "/sgturnos/registro",
-                "/sgturnos/recuperar",
-                "/estilos.css",
-                "/css/**",
-                "/js/**",
-                "/images/**"
-            ).permitAll()
-            .requestMatchers("/sgturnos/dashboard_admin").hasRole("ADMIN")
-            .requestMatchers("/sgturnos/dashboard_usuario").hasAnyRole("AUX", "ENF", "MED", "TER")
-            .anyRequest().authenticated()
-        )
-        .formLogin(form -> form
-            .loginPage("/sgturnos/login") // ✅ Cambiar aquí
-            .successHandler(successHandler)
-            .permitAll()
-        )
-        .logout(logout -> logout
-            .logoutUrl("/sgturnos/logout")
-            .logoutSuccessUrl("/sgturnos/login?logout")
-            .permitAll()
-        );
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authenticationProvider(daoAuthenticationProvider())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+            "/login",
+            "/login?error",
+            "/login?logout",
+            "/logout",
+            "/dashboard_usuario",
+            "/dashboard_admin",
+            "/error_rol",
+            "/novedades",
+            "/planificar_turnos",
+            "/registro",
+            "/lista",
+            "/malla_turnos",
+            "/turno",
+            "/form",
+            "/recuperar",
+            "/estilos.css",
+            "/animac.css",
+            "/css/**",
+            "/js/**",
+            "/test/**",
+            "/static/**",
+            "/images/**"
+                 ).permitAll()
+                .requestMatchers("/admin/dashboard_admin").hasRole("ADMINISTRADOR")
+                .requestMatchers("/usuario/dashboard_usuario").hasAnyRole("AUXILIAR", "ENFERMERO", "MEDICO", "TERAPIA")
+                .anyRequest().authenticated()
+            )
+             .formLogin(form -> form
+        .loginPage("/login")
+        .loginProcessingUrl("/login")
+        .usernameParameter("username")
+        .passwordParameter("password")
+        .successHandler(successHandler)
+        .failureUrl("/login?error")
+        .permitAll()
+    )
+    .logout(logout -> logout
+        .logoutUrl("/logout")
+        .logoutSuccessUrl("/login?logout")
+        .invalidateHttpSession(true)
+        .deleteCookies("JSESSIONID")
+        .permitAll()
+    );
 
-    return http.build();
-}
+        return http.build();
+    }
 }
