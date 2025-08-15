@@ -1,58 +1,57 @@
-//package com.sgturnos.sgturnos.model;
+package com.sgturnos.sgturnos.model;
 
-//import com.sgturnos.model.Turno;
-//import javax.persistence.*;
-//import java.time.LocalTime;
-//import java.util.List;
+import com.sgturnos.model.Turno;
+import jakarta.persistence.*;
+import java.time.LocalTime;
+import java.util.List;
 
-//@Entity
-//@Table(name = "horario")
-//public class Horario {
+@Entity
+@Table(name = "horario")
+public class Horario {
 
-  //  @Id
- //   @Column(name = "id_horario", length = 10)
-  //  private String idHorario;
+    @Id
+    @Column(name = "id_horario", length = 10)
+    private String idHorario;
 
- //   @Column(name = "hora_inicio")
- //  private LocalTime horaInicio;
+    @Column(name = "hora_inicio")
+    private LocalTime horaInicio;
 
-  //  @Column(name = "hora_fin")
-  //  private LocalTime horaFin;
+    @Column(name = "hora_fin")
+    private LocalTime horaFin;
+
+    @Column(name = "tipo")
+    private String tipo; // DIA / NOCHE / LIBRE / COMITE
 
     // Relación con Turno (uno a muchos)
-  //  @OneToMany(mappedBy = "horario")
-  //  private List<Turno> turnos;
+    @OneToMany(mappedBy = "horario")
+    private List<Turno> turno;
 
     // Getters y Setters
-  //  public String getIdHorario() {
-  //      return idHorario;
-  //  }
+    public String getIdHorario() {
+        return idHorario;
+    }
 
-  //  public void setIdHorario(String idHorario) {
-  //      this.idHorario = idHorario;
- //   }
+    public void setIdHorario(String idHorario) {
+        this.idHorario = idHorario;
+    }
 
-  //  public LocalTime getHoraInicio() {
-    //    return horaInicio;
- //   }
+    public LocalTime getHoraInicio() {
+        return horaInicio;
+    }
 
-   // public void setHoraInicio(LocalTime horaInicio) {
-    //    this.horaInicio = horaInicio;
-   // }
+    public void setHoraInicio(LocalTime horaInicio) {
+        this.horaInicio = horaInicio;
+    }
 
-  //  public LocalTime getHoraFin() {
-      //  return horaFin;
-    //}
+    public LocalTime getHoraFin() {
+        return horaFin;
+    }
 
-   // public void setHoraFin(LocalTime horaFin) {
-    //    this.horaFin = horaFin;
-  //  }
+    public void setHoraFin(LocalTime horaFin) {
+        this.horaFin = horaFin;
+    }
 
-  //  public List<Turno> getTurnos() {
-   //     return turnos;
-  //  }
-
-   // public void setTurnos(List<Turno> turnos) {
-   //     this.turnos = turnos;
-   // }
-//}
+    public String getTipo() {
+        return tipo;
+    }
+}

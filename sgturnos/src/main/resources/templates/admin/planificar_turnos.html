@@ -8,46 +8,139 @@
 <body>
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-center">Planificación de Turnos</h2>
+    <h2 class="mb-4 text-center">Gestión de Turnos</h2>
 
-    <form th:action="@{/admin/planificar-turno}" th:object="${turno}" method="post">
-        <div class="mb-3">
-            <label for="usuario" class="form-label">Seleccionar Usuario:</label>
-            <select id="usuario" name="usuarioId" class="form-select" required>
-                <option th:each="usuario : ${usuarios}"
-                        th:value="${usuario.id}"
-                        th:text="${usuario.nombre + ' (' + usuario.correo + ')'}">
-                </option>
-            </select>
+    <!-- Pestañas -->
+    <ul class="nav nav-tabs" id="turnosTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="planificar-tab" data-bs-toggle="tab" data-bs-target="#planificar" type="button" role="tab">Planificar Turno</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="lista-tab" data-bs-toggle="tab" data-bs-target="#lista" type="button" role="tab">Lista de Asignaciones</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="detalle-tab" data-bs-toggle="tab" data-bs-target="#detalle" type="button" role="tab">Detalle / Editar</button>
+        </li>
+    </ul>
+
+    <!-- Contenido de pestañas -->
+    <div class="tab-content mt-3" id="turnosTabContent">
+        <!-- Planificar Turno -->
+        <div class="tab-pane fade show active" id="planificar" role="tabpanel">
+            <form th:action="@{/admin/planificar-turno}" th:object="${turno}" method="post">
+                <div class="mb-3">
+                    <label for="usuario" class="form-label">Seleccionar Usuario:</label>
+                    <select id="usuario" name="usuarioId" class="form-select" required>
+                        <option th:each="usuario : ${usuarios}" th:value="${usuario.id}" th:text="${usuario.nombre + ' (' + usuario.correo + ')'}"></option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="fecha" class="form-label">Fecha:</label>
+                    <input type="date" id="fecha" name="fecha" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="horaInicio" class="form-label">Hora de Inicio:</label>
+                    <input type="time" id="horaInicio" name="horaInicio" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="horaFin" class="form-label">Hora de Fin:</label>
+                    <input type="time" id="horaFin" name="horaFin" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="area" class="form-label">Área / Servicio:</label>
+                    <input type="text" id="area" name="area" class="form-control" required>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">Guardar Turno</button>
+                    <a th:href="@{/admindash}" class="btn btn-secondary ms-2">Cancelar</a>
+                </div>
+            </form>
         </div>
 
-        <div class="mb-3">
-            <label for="fecha" class="form-label">Fecha:</label>
-            <input type="date" id="fecha" name="fecha" class="form-control" required>
+        <!-- Lista de Asignaciones -->
+        <div class="tab-pane fade" id="lista" role="tabpanel">
+            <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <a class="btn btn-primary mb-3" th:href="@{/asignaciones/nuevo}">Nueva Asignación</a>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Turno</th>
+                        <th>Empleado</th>
+                        <th>Fecha</th>
+                        <th>Observaciones</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="asignacion : ${asignaciones}">
+                        <td th:text="${asignacion.turno}"></td>
+                        <td th:text="${#strings.arraySplit(asignacion.empleado, ' - ')[1]}"></td>
+                        <td th:text="${asignacion.fecha}"></td>
+                        <td th:text="${asignacion.observaciones}"></td>
+                        <td>
+                            <a th:href="@{'/asignaciones/detalle/' + ${asignacion.turno} + '/' + ${asignacion.empleado} + '/' + ${asignacion.fecha}}" class="btn btn-info btn-sm">Detalle</a>
+                            <a th:href="@{'/asignaciones/editar/' + ${asignacion.turno} + '/' + ${asignacion.empleado} + '/' + ${asignacion.fecha}}" class="btn btn-warning btn-sm">Editar</a>
+                            <a th:href="@{'/asignaciones/eliminar/' + ${asignacion.turno} + '/' + ${asignacion.empleado} + '/' + ${asignacion.fecha}}" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar esta asignación?');">Eliminar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <div class="mb-3">
-            <label for="horaInicio" class="form-label">Hora de Inicio:</label>
-            <input type="time" id="horaInicio" name="horaInicio" class="form-control" required>
+        <!-- Detalle / Editar Asignación -->
+        <div class="tab-pane fade" id="detalle" role="tabpanel">
+            <div th:if="${asignacion != null}">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th>Turno</th>
+                            <td th:text="${asignacion.turnoObj != null ? asignacion.turnoObj.idTurno : asignacion.turno}"></td>
+                        </tr>
+                        <tr>
+                            <th>Empleado</th>
+                            <td th:text="${asignacion.empleadoObj != null ? 
+                                           asignacion.empleadoObj.usuario.primerNombre + ' ' + 
+                                           asignacion.empleadoObj.usuario.segundoNombre + ' ' +
+                                           asignacion.empleadoObj.usuario.primerApellido + ' ' +
+                                           asignacion.empleadoObj.usuario.segundoApellido
+                                           : asignacion.empleado}"></td>
+                        </tr>
+                        <tr>
+                            <th>Fecha</th>
+                            <td th:text="${asignacion.fecha}"></td>
+                        </tr>
+                        <tr>
+                            <th>Observaciones</th>
+                            <td th:text="${asignacion.observaciones}"></td>
+                        </tr>
+                        <tr>
+                            <th>Horario</th>
+                            <td th:text="${asignacion.turnoObj != null && asignacion.turnoObj.horario != null ? 
+                                           asignacion.turnoObj.horario.horaInicio + ' - ' + asignacion.turnoObj.horario.horaFin 
+                                           : 'No asignado'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Tipo de Turno</th>
+                            <td th:text="${asignacion.turnoObj != null ? asignacion.turnoObj.tipo : 'No definido'}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${asignacion == null}" class="alert alert-danger">
+                No se encontró la asignación.
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label for="horaFin" class="form-label">Hora de Fin:</label>
-            <input type="time" id="horaFin" name="horaFin" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="area" class="form-label">Área / Servicio:</label>
-            <input type="text" id="area" name="area" class="form-control" required>
-        </div>
-
-        <div class="text-center">
-            <button type="submit" class="btn btn-success">Guardar Turno</button>
-            <a th:href="@{/admindash}" class="btn btn-secondary ms-2">Cancelar</a>
-        </div>
-    </form>
-
+    </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
