@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-08-2025 a las 05:56:06
+-- Tiempo de generación: 16-08-2025 a las 01:42:49
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -29,7 +29,9 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `asignacion_turno` (
   `id_turno` bigint(20) NOT NULL,
-  `Id_empleado` varchar(20) NOT NULL
+  `Id_empleado` varchar(20) NOT NULL,
+  `fecha` date NOT NULL,
+  `observaciones` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -78,7 +80,7 @@ INSERT INTO `departamento` (`Id_departamento`, `Departamento`) VALUES
 CREATE TABLE `empleado` (
   `Id_empleado` varchar(20) NOT NULL,
   `Id_rol` varchar(10) NOT NULL,
-  `id_usuario` bigint(20) DEFAULT NULL
+  `Id_usuario` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -130,17 +132,19 @@ INSERT INTO `estado_novedad` (`Id_Estado_nov`, `Estado_nov`) VALUES
 CREATE TABLE `horario` (
   `id_horario` varchar(10) NOT NULL,
   `hora_inicio` time NOT NULL,
-  `hora_fin` time NOT NULL
+  `hora_fin` time NOT NULL,
+  `tipo` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `horario`
 --
 
-INSERT INTO `horario` (`id_horario`, `hora_inicio`, `hora_fin`) VALUES
-('h01', '07:00:00', '19:00:00'),
-('h02', '19:00:00', '07:00:00'),
-('h03', '07:00:00', '11:00:00');
+INSERT INTO `horario` (`id_horario`, `hora_inicio`, `hora_fin`, `tipo`) VALUES
+('C01', '10:00:00', '13:00:00', 'COMITE'),
+('h01', '07:00:00', '19:00:00', 'DIA'),
+('h02', '19:00:00', '07:00:00', 'NOCHE'),
+('h03', '07:00:00', '19:00:00', 'LIBRE');
 
 -- --------------------------------------------------------
 
@@ -331,7 +335,7 @@ ALTER TABLE `departamento`
 ALTER TABLE `empleado`
   ADD PRIMARY KEY (`Id_empleado`),
   ADD KEY `FK_EMPLEADO_ROL` (`Id_rol`),
-  ADD KEY `FK_EMPLEADO_USUARIO` (`id_usuario`);
+  ADD KEY `FK_EMPLEADO_USUARIO` (`Id_usuario`);
 
 --
 -- Indices de la tabla `estado_capacitacion`
@@ -427,7 +431,7 @@ ALTER TABLE `capacitacion`
 --
 ALTER TABLE `empleado`
   ADD CONSTRAINT `FK_EMPLEADO_ROL` FOREIGN KEY (`Id_rol`) REFERENCES `rol` (`Id_rol`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_EMPLEADO_USUARIO` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`Id_usuario`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `FK_EMPLEADO_USUARIO` FOREIGN KEY (`Id_usuario`) REFERENCES `usuario` (`Id_usuario`);
 
 --
 -- Filtros para la tabla `novedades`
