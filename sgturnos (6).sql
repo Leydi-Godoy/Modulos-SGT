@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-08-2025 a las 01:42:49
+-- Tiempo de generación: 29-08-2025 a las 12:33:40
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -28,11 +28,35 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `asignacion_turno` (
-  `id_turno` bigint(20) NOT NULL,
-  `Id_empleado` varchar(20) NOT NULL,
+  `Id_turno` bigint(20) NOT NULL,
+  `Id_colaborador` bigint(20) NOT NULL,
   `fecha` date NOT NULL,
   `observaciones` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `asignacion_turno`
+--
+
+INSERT INTO `asignacion_turno` (`Id_turno`, `Id_colaborador`, `fecha`, `observaciones`) VALUES
+(8, 4, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 5, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 6, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 7, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 8, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 9, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 10, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 11, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 15, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 16, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 17, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 18, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 19, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 23, '2025-09-01', 'Cobertura mínima DIA'),
+(8, 24, '2025-09-01', 'Cobertura mínima DIA'),
+(9, 12, '2025-09-01', 'Cobertura mínima NOCHE'),
+(9, 13, '2025-09-01', 'Cobertura mínima NOCHE'),
+(9, 14, '2025-09-01', 'Cobertura mínima NOCHE');
 
 -- --------------------------------------------------------
 
@@ -45,8 +69,60 @@ CREATE TABLE `capacitacion` (
   `Id_tema` varchar(30) NOT NULL,
   `Fecha` date NOT NULL,
   `Id_estado_cap` varchar(30) NOT NULL,
-  `Id_empleado` varchar(20) NOT NULL
+  `Id_colaborador` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `colaborador`
+--
+
+CREATE TABLE `colaborador` (
+  `Id_colaborador` bigint(20) NOT NULL,
+  `id_rol` varchar(255) DEFAULT NULL,
+  `Id_usuario` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `colaborador`
+--
+
+INSERT INTO `colaborador` (`Id_colaborador`, `id_rol`, `Id_usuario`) VALUES
+(1, 'adm05', 80101476),
+(2, 'adm05', 1104774847),
+(3, 'adm05', 1110110120),
+(4, 'aux01', 1101101101),
+(5, 'aux01', 1104104101),
+(6, 'aux01', 1110101110),
+(7, 'aux01', 1110110111),
+(8, 'aux01', 1110110112),
+(9, 'aux01', 1110110114),
+(10, 'aux01', 1110110115),
+(11, 'aux01', 1110110116),
+(12, 'aux01', 1110110117),
+(13, 'aux01', 1110110118),
+(14, 'aux01', 1110110142),
+(15, 'enf02', 1107107107),
+(16, 'enf02', 1108108104),
+(17, 'enf02', 1109109101),
+(18, 'med03', 1102102101),
+(19, 'med03', 1105105104),
+(20, 'med03', 1110110122),
+(21, 'med03', 1110110146),
+(22, 'med03', 1110110241),
+(23, 'ter04', 110681104),
+(24, 'ter04', 1103103101),
+(25, 'ter04', 1110110113),
+(26, 'ter04', 1110110121),
+(27, 'ter04', 1110110149),
+(28, 'ter04', 1110110157),
+(32, 'enf02', 1110110148),
+(33, 'enf02', 1110110150),
+(34, 'enf02', 1110110151),
+(35, 'aux01', 1110110152),
+(36, 'aux01', 1110110153),
+(37, 'aux01', 1110110154);
 
 -- --------------------------------------------------------
 
@@ -74,18 +150,6 @@ INSERT INTO `departamento` (`Id_departamento`, `Departamento`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `empleado`
---
-
-CREATE TABLE `empleado` (
-  `Id_empleado` varchar(20) NOT NULL,
-  `Id_rol` varchar(10) NOT NULL,
-  `Id_usuario` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `estado_capacitacion`
 --
 
@@ -106,34 +170,14 @@ INSERT INTO `estado_capacitacion` (`Id_estado_cap`, `Estado_de_cap`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `estado_novedad`
---
-
-CREATE TABLE `estado_novedad` (
-  `Id_Estado_nov` varchar(20) NOT NULL,
-  `Estado_nov` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `estado_novedad`
---
-
-INSERT INTO `estado_novedad` (`Id_Estado_nov`, `Estado_nov`) VALUES
-('01_APRO', 'APROBADO'),
-('02_RECH', 'RECHAZADO'),
-('03_PEND', 'PENDIENTE');
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `horario`
 --
 
 CREATE TABLE `horario` (
-  `id_horario` varchar(10) NOT NULL,
-  `hora_inicio` time NOT NULL,
-  `hora_fin` time NOT NULL,
-  `tipo` varchar(10) NOT NULL
+  `id_horario` varchar(255) NOT NULL,
+  `hora_inicio` varchar(255) DEFAULT NULL,
+  `hora_fin` varchar(255) DEFAULT NULL,
+  `tipo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -167,16 +211,16 @@ CREATE TABLE `novedades` (
 --
 
 CREATE TABLE `rol` (
-  `Id_rol` varchar(10) NOT NULL,
-  `Rol` varchar(50) NOT NULL,
-  `Id_departamento` varchar(10) DEFAULT NULL
+  `id_rol` varchar(255) NOT NULL,
+  `rol` varchar(255) DEFAULT NULL,
+  `id_departamento` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `rol`
 --
 
-INSERT INTO `rol` (`Id_rol`, `Rol`, `Id_departamento`) VALUES
+INSERT INTO `rol` (`id_rol`, `rol`, `id_departamento`) VALUES
 ('adm05', 'ADMINISTRADOR', 'D003'),
 ('aux01', 'AUXILIAR', 'enfer01'),
 ('enf02', 'ENFERMERO', 'enfer01'),
@@ -237,23 +281,26 @@ INSERT INTO `tipo_novedad` (`Id_tipo_novedad`, `Novedad`) VALUES
 --
 
 CREATE TABLE `turno` (
-  `id_turno` bigint(20) NOT NULL,
+  `Id_turno` bigint(20) NOT NULL,
   `Fecha_ini` date NOT NULL,
   `Fecha_fin` date NOT NULL,
-  `Id_horario` varchar(20) NOT NULL
+  `id_horario` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `turno`
 --
 
-INSERT INTO `turno` (`id_turno`, `Fecha_ini`, `Fecha_fin`, `Id_horario`) VALUES
-(1, '2025-04-15', '2025-04-15', 'h01'),
-(2, '2025-04-16', '2025-04-17', 'h02'),
-(3, '2025-04-17', '2025-04-17', 'h01'),
-(4, '2025-04-16', '2025-04-17', 'h02'),
-(5, '2025-04-19', '2025-04-19', 'h01'),
-(6, '2025-04-16', '2025-04-17', 'h02');
+INSERT INTO `turno` (`Id_turno`, `Fecha_ini`, `Fecha_fin`, `id_horario`) VALUES
+(1, '2025-04-15', '2025-04-15', '0'),
+(2, '2025-04-16', '2025-04-17', '0'),
+(3, '2025-04-17', '2025-04-17', '0'),
+(4, '2025-04-16', '2025-04-17', '0'),
+(5, '2025-04-19', '2025-04-19', '0'),
+(6, '2025-04-16', '2025-04-17', '0'),
+(7, '2025-09-01', '2025-09-01', '0'),
+(8, '2025-09-01', '2025-09-01', 'h01'),
+(9, '2025-09-01', '2025-09-01', 'h02');
 
 -- --------------------------------------------------------
 
@@ -267,7 +314,7 @@ CREATE TABLE `usuario` (
   `segundo_nombre` varchar(255) DEFAULT NULL,
   `primer_apellido` varchar(255) DEFAULT NULL,
   `segundo_apellido` varchar(255) DEFAULT NULL,
-  `Id_rol` varchar(20) DEFAULT NULL,
+  `id_rol` varchar(255) DEFAULT NULL,
   `correo` varchar(255) DEFAULT NULL,
   `contrasena` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -276,7 +323,7 @@ CREATE TABLE `usuario` (
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`Id_usuario`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `Id_rol`, `correo`, `contrasena`) VALUES
+INSERT INTO `usuario` (`Id_usuario`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `id_rol`, `correo`, `contrasena`) VALUES
 (80101476, 'Edisson', 'Andrés', 'Taborda', 'Reyes', 'adm05', 'edissontaborda@paliacare.com', '$2a$10$TNNqfKXw.NYc5GwJiJ5pB.k1Sdfam8Jqt95GTyLvd0DfR18HZvcV6'),
 (110681104, 'Genny', 'Carolina', 'Murcia', 'Vargas', 'ter04', 'gennymurcia@paliacare.com', '$2a$10$T3O/m/xNp18oXsm4o85QyeX4o5zyhiWrFu7JbLiypLe6mF76h832O'),
 (1101101101, 'Yuliy', 'Paola', 'Daza', 'Oviedo', 'aux01', 'yuliydaza@paliacare.com', '$2a$10$kQ/V.vkCHYq..xPW5/a2feZouwN.j5K/8kzgSkDNosVUBTooeQQQC'),
@@ -301,7 +348,16 @@ INSERT INTO `usuario` (`Id_usuario`, `primer_nombre`, `segundo_nombre`, `primer_
 (1110110121, 'Marcela', NULL, 'Panqueva', 'Rios', 'ter04', 'marcelapanqueva@paliacare.com', '$2a$10$Ae2/xw/Xoe80POlyxgQ5SuYUdehCditbX.w50rlFSYzgIup3K23Bm'),
 (1110110122, 'Erika', 'Amanda', 'Suarez', 'Parra', 'med03', 'amandasuarez@paliacare.com', '$2a$10$62f.794jr3Z2GD.LGK31zOV4TTJuJIV159O8IU1bBjwmwAfzUd4di'),
 (1110110142, 'Yajaira', 'Paola', 'Rangel', 'Roa', 'aux01', 'yajairarangel@paliacare.com', '$2a$10$dX5yc0PZGKyLlg1pllcV2ujmEIuJOTErIGmH0c92XBqPJnj/OEVb6'),
-(1110110146, 'Sandy', 'Lorena', 'Páez', 'Soto', 'med03', 'sandypaez@paliacare.com', '$2a$10$kAU6OdSpGnFTLhdntDHOt.hVxlX41JpTYp6rnQWovQf5hSqTEM5SO');
+(1110110146, 'Sandy', 'Lorena', 'Páez', 'Soto', 'med03', 'sandypaez@paliacare.com', '$2a$10$kAU6OdSpGnFTLhdntDHOt.hVxlX41JpTYp6rnQWovQf5hSqTEM5SO'),
+(1110110148, 'Luis', 'Alberto', 'Martinez', 'Colorado', 'enf02', 'luismartinez@paliacare.com', '$2a$10$DH2nFj2mGzrSeL5DZlPuYe.bUSg3Rv1gxJ/vOlVSVQkCRFj4HCTKu'),
+(1110110149, 'Sharon', 'Daniela', 'Vargas', 'Pava', 'enf02', 'sharonvargas@paliacare.com', '$2a$10$VjZBFXcEhUICgM7.r0oP4eO0xeitZmTB37irobiz/gT8FIzPSZBPm'),
+(1110110150, 'David', 'Steban', 'Mendoza', 'Escobar', 'enf02', 'davidmendoza@paliacare.com', '$2a$10$bXmf4W/912ZdZOFI2eNcoOnIad9Pmapd1PBLN1dyeMqUjPNT7T1jK'),
+(1110110151, 'Oscar', 'Anselmo', 'Valencia', 'Bravo', 'enf02', 'oscarvalencia@paliacare.com', '$2a$10$FsIrLWczzrbF6hjNcWWSc.5wzwhc1ZoW5TIvQ8LBXg1Q6cSTqw/5e'),
+(1110110152, 'Alexander', '', 'Quintero', 'Duran', 'aux01', 'alexanderquintero@paliacare.com', '$2a$10$7gQAJT.3a9JCA8dSC2G3Bu2T0pIqSWhVlYvRvI1XqsSl/nc6Ze3CW'),
+(1110110153, 'Angie', 'Daniela', 'Pastor', 'Leon', 'aux01', 'angiepastor@paliacare.com', '$2a$10$Axkk6ZWFjQybj1rPadFKie8Rpa1sk.XTB5FjXDsnKgZlWfYVCeY7a'),
+(1110110154, 'Catalina', 'Maria', 'Leon', 'Bueno', 'aux01', 'catalinaleon@paliacare.com', '$2a$10$KyJ16eSp/tUad4sHG0gdluGxnn9lSdC89LdXy/54Cb01LGrMfNnma'),
+(1110110157, 'Paula', 'Andrea', 'Bernal', 'Duitama', 'med03', 'paulabernal@paliacare.com', '$2a$10$1.vJ8mnw6ilQtvYgBcvvuurhTQf.bWNN0p0M4P7LAXuy.tXqDAjSa'),
+(1110110241, 'Yohana', '', 'Hernandez', 'Marin', 'enf02', 'yohanahernandez@paliacare.com', '$2a$10$A.Am.YbTXKh6Jzkji/c4NeRw0H5.nfWVM.Xb.S9BVslKzLACrbBz6');
 
 --
 -- Índices para tablas volcadas
@@ -311,17 +367,25 @@ INSERT INTO `usuario` (`Id_usuario`, `primer_nombre`, `segundo_nombre`, `primer_
 -- Indices de la tabla `asignacion_turno`
 --
 ALTER TABLE `asignacion_turno`
-  ADD PRIMARY KEY (`id_turno`,`Id_empleado`),
-  ADD KEY `Id_empleado` (`Id_empleado`);
+  ADD PRIMARY KEY (`Id_turno`,`Id_colaborador`,`fecha`),
+  ADD KEY `FK_ASIGNACION_COLABORADOR` (`Id_colaborador`);
 
 --
 -- Indices de la tabla `capacitacion`
 --
 ALTER TABLE `capacitacion`
   ADD PRIMARY KEY (`Id_capacitacion`),
-  ADD KEY `Id_tema` (`Id_tema`),
-  ADD KEY `Id_estado_cap` (`Id_estado_cap`),
-  ADD KEY `Id_empleado` (`Id_empleado`);
+  ADD KEY `FK_CAPACITACION_COLABORADOR` (`Id_colaborador`),
+  ADD KEY `FK_CAPACITACION_TEMA` (`Id_tema`),
+  ADD KEY `FK_CAPACITACION_ESTADO` (`Id_estado_cap`);
+
+--
+-- Indices de la tabla `colaborador`
+--
+ALTER TABLE `colaborador`
+  ADD PRIMARY KEY (`Id_colaborador`),
+  ADD KEY `FK_COLABORADOR_ROL` (`id_rol`),
+  ADD KEY `FK_COLABORADOR_USUARIO` (`Id_usuario`);
 
 --
 -- Indices de la tabla `departamento`
@@ -330,24 +394,10 @@ ALTER TABLE `departamento`
   ADD PRIMARY KEY (`Id_departamento`);
 
 --
--- Indices de la tabla `empleado`
---
-ALTER TABLE `empleado`
-  ADD PRIMARY KEY (`Id_empleado`),
-  ADD KEY `FK_EMPLEADO_ROL` (`Id_rol`),
-  ADD KEY `FK_EMPLEADO_USUARIO` (`Id_usuario`);
-
---
 -- Indices de la tabla `estado_capacitacion`
 --
 ALTER TABLE `estado_capacitacion`
   ADD PRIMARY KEY (`Id_estado_cap`);
-
---
--- Indices de la tabla `estado_novedad`
---
-ALTER TABLE `estado_novedad`
-  ADD PRIMARY KEY (`Id_Estado_nov`);
 
 --
 -- Indices de la tabla `horario`
@@ -368,8 +418,8 @@ ALTER TABLE `novedades`
 -- Indices de la tabla `rol`
 --
 ALTER TABLE `rol`
-  ADD PRIMARY KEY (`Id_rol`),
-  ADD KEY `FK_ROL_DEPARTAMENTO` (`Id_departamento`);
+  ADD PRIMARY KEY (`id_rol`),
+  ADD KEY `FK_ROL_DEPARTAMENTO` (`id_departamento`);
 
 --
 -- Indices de la tabla `tema_capacitacion`
@@ -387,25 +437,31 @@ ALTER TABLE `tipo_novedad`
 -- Indices de la tabla `turno`
 --
 ALTER TABLE `turno`
-  ADD PRIMARY KEY (`id_turno`),
-  ADD KEY `FK_TURNO_HORARIO` (`Id_horario`);
+  ADD PRIMARY KEY (`Id_turno`),
+  ADD KEY `FK_TURNO_HORARIO` (`id_horario`);
 
 --
 -- Indices de la tabla `usuario`
 --
 ALTER TABLE `usuario`
   ADD PRIMARY KEY (`Id_usuario`),
-  ADD KEY `fk_usuario_rol` (`Id_rol`);
+  ADD KEY `FK_USUARIO_ROL` (`id_rol`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
+-- AUTO_INCREMENT de la tabla `colaborador`
+--
+ALTER TABLE `colaborador`
+  MODIFY `Id_colaborador` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
 -- AUTO_INCREMENT de la tabla `turno`
 --
 ALTER TABLE `turno`
-  MODIFY `id_turno` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `Id_turno` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Restricciones para tablas volcadas
@@ -415,49 +471,30 @@ ALTER TABLE `turno`
 -- Filtros para la tabla `asignacion_turno`
 --
 ALTER TABLE `asignacion_turno`
-  ADD CONSTRAINT `asignacion_turno_ibfk_1` FOREIGN KEY (`id_turno`) REFERENCES `turno` (`id_turno`),
-  ADD CONSTRAINT `asignacion_turno_ibfk_2` FOREIGN KEY (`Id_empleado`) REFERENCES `empleado` (`Id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `FK_ASIGNACION_COLABORADOR` FOREIGN KEY (`Id_colaborador`) REFERENCES `colaborador` (`Id_colaborador`),
+  ADD CONSTRAINT `FK_ASIGNACION_TURNO` FOREIGN KEY (`Id_turno`) REFERENCES `turno` (`Id_turno`);
 
 --
 -- Filtros para la tabla `capacitacion`
 --
 ALTER TABLE `capacitacion`
-  ADD CONSTRAINT `capacitacion_ibfk_1` FOREIGN KEY (`Id_tema`) REFERENCES `tema_capacitacion` (`Id_tema`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `capacitacion_ibfk_2` FOREIGN KEY (`Id_estado_cap`) REFERENCES `estado_capacitacion` (`Id_estado_cap`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `capacitacion_ibfk_3` FOREIGN KEY (`Id_empleado`) REFERENCES `empleado` (`Id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `FK_CAPACITACION_COLABORADOR` FOREIGN KEY (`Id_colaborador`) REFERENCES `colaborador` (`Id_colaborador`),
+  ADD CONSTRAINT `FK_CAPACITACION_ESTADO` FOREIGN KEY (`Id_estado_cap`) REFERENCES `estado_capacitacion` (`Id_estado_cap`),
+  ADD CONSTRAINT `FK_CAPACITACION_TEMA` FOREIGN KEY (`Id_tema`) REFERENCES `tema_capacitacion` (`Id_tema`);
 
 --
--- Filtros para la tabla `empleado`
+-- Filtros para la tabla `colaborador`
 --
-ALTER TABLE `empleado`
-  ADD CONSTRAINT `FK_EMPLEADO_ROL` FOREIGN KEY (`Id_rol`) REFERENCES `rol` (`Id_rol`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_EMPLEADO_USUARIO` FOREIGN KEY (`Id_usuario`) REFERENCES `usuario` (`Id_usuario`);
-
---
--- Filtros para la tabla `novedades`
---
-ALTER TABLE `novedades`
-  ADD CONSTRAINT `FK_NOVEDADES_ESTADO_NOV` FOREIGN KEY (`id_estado_nov`) REFERENCES `estado_novedad` (`Id_Estado_nov`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_NOVEDADES_TIPO_NOVEDAD` FOREIGN KEY (`Id_tipo_novedad`) REFERENCES `tipo_novedad` (`Id_tipo_novedad`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_novedades_empleado` FOREIGN KEY (`Id_empleado`) REFERENCES `empleado` (`Id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `rol`
---
-ALTER TABLE `rol`
-  ADD CONSTRAINT `FK_ROL_DEPARTAMENTO` FOREIGN KEY (`Id_departamento`) REFERENCES `departamento` (`Id_departamento`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `turno`
---
-ALTER TABLE `turno`
-  ADD CONSTRAINT `FK_TURNO_HORARIO` FOREIGN KEY (`Id_horario`) REFERENCES `horario` (`id_horario`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `colaborador`
+  ADD CONSTRAINT `FK_COLABORADOR_ROL` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`Id_rol`),
+  ADD CONSTRAINT `FK_COLABORADOR_USUARIO` FOREIGN KEY (`Id_usuario`) REFERENCES `usuario` (`Id_usuario`);
 
 --
 -- Filtros para la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  ADD CONSTRAINT `fk_usuario_rol` FOREIGN KEY (`Id_rol`) REFERENCES `rol` (`Id_rol`);
+  ADD CONSTRAINT `FK_USUARIO_ROL` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`Id_rol`),
+  ADD CONSTRAINT `FKp5pt6m71kdbfpg38v1bupxnjf` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`Id_rol`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

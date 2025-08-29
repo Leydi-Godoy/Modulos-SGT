@@ -6,8 +6,8 @@ import jakarta.persistence.*;
 @Table(name = "usuario")
 public class Usuario {
 
-   @Id
-   @Column(name = "Id_usuario")
+    @Id
+    @Column(name = "Id_usuario")
     private Long idUsuario;
 
     @Column(name = "primer_nombre")
@@ -23,7 +23,7 @@ public class Usuario {
     private String segundoApellido;
 
     @ManyToOne
-    @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol") // nombre de la columna en la tabla usuario
+    @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")
     private Rol rol;
 
     @Column(name = "correo")
@@ -31,8 +31,12 @@ public class Usuario {
 
     @Column(name = "contrasena")
     private String contrasena;
+    
+   // Relación uno a uno con Colaborador
+@OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+private Colaborador colaborador;
 
-    // Getters y setters (puedes generarlos con tu IDE)
+    // Getters y setters
 
     public Long getIdUsuario() {
         return idUsuario;
@@ -97,5 +101,27 @@ public class Usuario {
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
-      
+
+    public Colaborador getColaborador() {
+        return colaborador;
+    }
+
+    // Setter con sincronización
+public void setColaborador(Colaborador colaborador) {    
+    this.colaborador = colaborador;
+    if (colaborador != null) {
+        colaborador.setUsuario(this); // asegura la relación
+    }
+}
+
+    // Método de conveniencia para obtener nombre completo
+    public String getNombreCompleto() {
+        return primerNombre + " " + (segundoNombre != null ? segundoNombre + " " : "") +
+                primerApellido + " " + (segundoApellido != null ? segundoApellido : "");
+    }
+    
+    // Método para verificar si tiene un rol específico
+    public boolean tieneRol(String nombreRol) {
+        return rol != null && rol.getRol() != null && rol.getRol().equalsIgnoreCase(nombreRol);
+    }
 }

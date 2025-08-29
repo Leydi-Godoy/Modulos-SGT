@@ -1,32 +1,30 @@
-package com.sgturnos.sgturnos.model;
+package com.sgturnos.model;
 
-import com.sgturnos.model.Turno;
 import jakarta.persistence.*;
-import java.time.LocalTime;
 import java.util.List;
 
 @Entity
 @Table(name = "horario")
 public class Horario {
 
-    @Id
-    @Column(name = "id_horario", length = 10)
-    private String idHorario;
+   @Id
+@Column(name = "Id_horario")
+private String idHorario;
 
     @Column(name = "hora_inicio")
-    private LocalTime horaInicio;
+    private String horaInicio;
 
     @Column(name = "hora_fin")
-    private LocalTime horaFin;
+    private String horaFin;
 
     @Column(name = "tipo")
-    private String tipo; // DIA / NOCHE / LIBRE / COMITE
+    private String tipo;
 
-    // Relación con Turno (uno a muchos)
     @OneToMany(mappedBy = "horario")
-    private List<Turno> turno;
+    private List<Turno> turnos;
 
-    // Getters y Setters
+    // Getters y setters
+
     public String getIdHorario() {
         return idHorario;
     }
@@ -34,24 +32,37 @@ public class Horario {
     public void setIdHorario(String idHorario) {
         this.idHorario = idHorario;
     }
-
-    public LocalTime getHoraInicio() {
+   
+    public String getHoraInicio() {
         return horaInicio;
     }
 
-    public void setHoraInicio(LocalTime horaInicio) {
+    public void setHoraInicio(String horaInicio) {
         this.horaInicio = horaInicio;
     }
 
-    public LocalTime getHoraFin() {
+    public String getHoraFin() {
         return horaFin;
     }
 
-    public void setHoraFin(LocalTime horaFin) {
+    public void setHoraFin(String horaFin) {
         this.horaFin = horaFin;
     }
 
     public String getTipo() {
         return tipo;
     }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public List<Turno> getTurnos() {
+        return turnos;
+    }
+
+    public void setTurnos(List<Turno> turnos) {
+        this.turnos = turnos;
+    }
+    
 }

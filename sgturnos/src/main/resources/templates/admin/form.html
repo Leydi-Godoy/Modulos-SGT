@@ -81,7 +81,7 @@
                    <div class="form-group">
         <label for="rol">Cargo</label>
         <div class="position-relative has-icon-right">
-            <select id="rol" th:field="*{rol}" class="form-control input-shadow" required>
+            <select id="rol" th:field="*{rol.idRol}" class="form-control input-shadow" required>
     <option value="">Seleccione un cargo</option>
     <option th:each="r : ${roles}" th:value="${r.idRol}" th:text="${r.rol}"></option>
            </select>

@@ -1,14 +1,17 @@
 package com.sgturnos.controller;
 
 import com.sgturnos.model.AsignacionTurno;
-import com.sgturnos.model.Usuario;
 import com.sgturnos.service.PlanificacionTurnosService;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin")
@@ -17,69 +20,91 @@ public class TurnoAdminController {
     @Autowired
     private PlanificacionTurnosService planificacionService;
 
-    // Página principal de planificación de turnos
+    // Página principal de planificación
     @GetMapping("/planificar_turnos")
     public String planificarTurnos(Model model) {
-        List<Usuario> usuarios = planificacionService.listarUsuarios();
-        List<AsignacionTurno> asignaciones = planificacionService.listarAsignaciones();
-
-        model.addAttribute("usuarios", usuarios);
-        model.addAttribute("asignaciones", asignaciones);
-        model.addAttribute("turno", new AsignacionTurno()); // objeto vacío para el formulario
-
-        return "planificar_turnos"; // tu HTML centralizado
+        model.addAttribute("colaboradores", planificacionService.listarColaboradores()); // Cambiado
+        model.addAttribute("horarios", planificacionService.listarHorarios());
+        model.addAttribute("asignaciones", planificacionService.listarAsignaciones());
+        model.addAttribute("asignacionTurno", null);
+        return "admin/planificar_turnos";
     }
 
-    // Guardar nueva asignación de turno
+    // Guardar asignación manual
     @PostMapping("/planificar_turnos")
-    public String guardarTurno(@RequestParam Long usuarioId,
+    public String guardarTurno(@RequestParam("colaboradorId") Long idColaborador, // Cambiado
+                               @RequestParam("turnoId") Long idTurno,
                                @RequestParam String fecha,
-                               @RequestParam String horaInicio,
-                               @RequestParam String horaFin,
-                               @RequestParam String area) {
-
-        planificacionService.guardarAsignacion(usuarioId, fecha, horaInicio, horaFin, area);
+                               @RequestParam(required = false) String observaciones) {
+        planificacionService.guardarAsignacion(idColaborador, idTurno, LocalDate.parse(fecha), observaciones); // Cambiado
         return "redirect:/admin/planificar_turnos";
     }
 
-    // Editar asignación: mostrar datos en el formulario
-    @GetMapping("/asignaciones/editar/{id}")
-    public String editarAsignacion(@PathVariable Long id, Model model) {
-        AsignacionTurno asignacion = planificacionService.obtenerPorId(id);
-        List<Usuario> usuarios = planificacionService.listarUsuarios();
-
-        model.addAttribute("asignacion", asignacion);
-        model.addAttribute("usuarios", usuarios);
-
-        return "planificar_turnos"; // misma página centralizada
+    // Cargar asignación en modo edición
+    @GetMapping("/asignaciones/editar")
+    public String editarAsignacion(@RequestParam("colaboradorId") Long idColaborador, // Cambiado
+                                   @RequestParam("turnoId") Long idTurno,
+                                   @RequestParam String fecha,
+                                   Model model) {
+        AsignacionTurno asignacion = planificacionService.obtenerPorId(idTurno, idColaborador, LocalDate.parse(fecha)); // Cambiado
+        model.addAttribute("asignacionTurno", asignacion);
+        model.addAttribute("colaboradores", planificacionService.listarColaboradores()); // Cambiado
+        model.addAttribute("horarios", planificacionService.listarHorarios());
+        model.addAttribute("asignaciones", planificacionService.listarAsignaciones());
+        return "admin/planificar_turnos";
     }
 
     // Guardar edición de asignación
     @PostMapping("/asignaciones/editar")
-    public String guardarEdicion(@RequestParam Long id,
-                                 @RequestParam Long usuarioId,
+    public String guardarEdicion(@RequestParam("colaboradorId") Long idColaborador, // Cambiado
+                                 @RequestParam("turnoId") Long idTurno,
                                  @RequestParam String fecha,
-                                 @RequestParam String horaInicio,
-                                 @RequestParam String horaFin,
-                                 @RequestParam String area) {
-
-        planificacionService.editarAsignacion(id, usuarioId, fecha, horaInicio, horaFin, area);
+                                 @RequestParam(required = false) String observaciones) {
+        planificacionService.editarAsignacion(idTurno, idColaborador, LocalDate.parse(fecha), observaciones); // Cambiado
         return "redirect:/admin/planificar_turnos";
     }
 
     // Eliminar asignación
-    @GetMapping("/asignaciones/eliminar/{id}")
-    public String eliminarAsignacion(@PathVariable Long id) {
-        planificacionService.eliminarAsignacion(id);
+    @GetMapping("/asignaciones/eliminar")
+    public String eliminarAsignacion(@RequestParam("colaboradorId") Long idColaborador, // Cambiado
+                                     @RequestParam("turnoId") Long idTurno,
+                                     @RequestParam String fecha) {
+        planificacionService.eliminarAsignacion(idTurno, idColaborador, LocalDate.parse(fecha)); // Cambiado
         return "redirect:/admin/planificar_turnos";
     }
 
-    // Ver detalle de asignación
-    @GetMapping("/asignaciones/detalle/{id}")
-    public String detalleAsignacion(@PathVariable Long id, Model model) {
-        AsignacionTurno asignacion = planificacionService.obtenerPorId(id);
-        model.addAttribute("asignacion", asignacion);
-
-        return "planificar_turnos"; // misma página centralizada
+    // Ver detalle de una asignación
+    @GetMapping("/asignaciones/detalle")
+    public String detalleAsignacion(@RequestParam("colaboradorId") Long idColaborador, // Cambiado
+                                    @RequestParam("turnoId") Long idTurno,
+                                    @RequestParam String fecha,
+                                    Model model) {
+        AsignacionTurno asignacion = planificacionService.obtenerPorId(idTurno, idColaborador, LocalDate.parse(fecha)); // Cambiado
+        model.addAttribute("asignacionTurno", asignacion);
+        model.addAttribute("colaboradores", planificacionService.listarColaboradores()); // Cambiado
+        model.addAttribute("horarios", planificacionService.listarHorarios());
+        model.addAttribute("asignaciones", planificacionService.listarAsignaciones());
+        return "admin/planificar_turnos";
     }
+
+    // Generar malla automática de turnos
+    @PostMapping("/planificar_turnos/generar")
+    public String generarMalla(@RequestParam String mes,
+                               RedirectAttributes ra) {
+        try {
+            // mes esperado en formato "2025-08"
+            YearMonth yearMonth = YearMonth.parse(mes);
+            planificacionService.generarMalla(yearMonth);
+
+            ra.addFlashAttribute("mensaje", "✅ Malla generada correctamente para " + yearMonth);
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "⚠️ Error al generar malla: " + e.getMessage());
+        }
+        return "redirect:/admin/planificar_turnos";
+    }
+    
+    @GetMapping("/dashboard_admin")
+public String dashboardAdmin() {
+    return "admin/dashboard_admin"; // Asegúrate de tener este archivo HTML
+}
 }

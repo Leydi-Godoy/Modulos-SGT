@@ -1,58 +1,75 @@
 package com.sgturnos.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Entity
-@Table(name = "asignaciones_turno")
+@Table(name = "asignacion_turno")
 public class AsignacionTurno {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private AsignacionTurnoPK id;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    @MapsId("idColaborador")
+    @JoinColumn(name = "Id_colaborador", referencedColumnName = "Id_colaborador")
+    private Colaborador colaborador;
 
+    @ManyToOne
+    @MapsId("idTurno")
+    @JoinColumn(name = "Id_turno", referencedColumnName = "Id_turno")
+    private Turno turno;
+
+    @Column(name = "fecha", insertable = false, updatable = false)
     private LocalDate fecha;
-    private LocalTime horaInicio;
-    private LocalTime horaFin;
-    private String area;
+
+    @Column(name = "observaciones")
     private String observaciones;
 
-    // Constructores
-    public AsignacionTurno() {}
-
-    public AsignacionTurno(Usuario usuario, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin, String area, String observaciones) {
-        this.usuario = usuario;
-        this.fecha = fecha;
-        this.horaInicio = horaInicio;
-        this.horaFin = horaFin;
-        this.area = area;
-        this.observaciones = observaciones;
+    // Getters y setters
+    public AsignacionTurnoPK getId() {
+        return id;
     }
 
-    // Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public void setId(AsignacionTurnoPK id) {
+        this.id = id;
+    }
 
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public Colaborador getColaborador() {
+        return colaborador;
+    }
 
-    public LocalDate getFecha() { return fecha; }
-    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+    public void setColaborador(Colaborador colaborador) {
+        this.colaborador = colaborador;
+    }
 
-    public LocalTime getHoraInicio() { return horaInicio; }
-    public void setHoraInicio(LocalTime horaInicio) { this.horaInicio = horaInicio; }
+    public Turno getTurno() {
+        return turno;
+    }
 
-    public LocalTime getHoraFin() { return horaFin; }
-    public void setHoraFin(LocalTime horaFin) { this.horaFin = horaFin; }
+    public void setTurno(Turno turno) {
+        this.turno = turno;
+    }
 
-    public String getArea() { return area; }
-    public void setArea(String area) { this.area = area; }
+    public LocalDate getFecha() {
+        return fecha;
+    }
 
-    public String getObservaciones() { return observaciones; }
-    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
 }

@@ -1,13 +1,10 @@
 package com.sgturnos.repository;
 
-import com.sgturnos.sgturnos.model.Horario;
+import com.sgturnos.model.Horario;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface HorarioRepository extends JpaRepository<Horario, String> {
+import java.util.Optional;
 
-    // Método para buscar un horario por tipo: DIA, NOCHE, LIBRE, COMITE
-    Horario findByTipo(String tipo);
-
+public interface HorarioRepository extends JpaRepository<Horario, Long> {
+    Optional<Horario> findByTipo(String tipo); // usa Optional para manejar faltantes
 }

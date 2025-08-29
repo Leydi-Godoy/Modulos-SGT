@@ -1,8 +1,8 @@
 package com.sgturnos.model;
 
-import com.sgturnos.sgturnos.model.Horario;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "turno")
@@ -10,31 +10,25 @@ public class Turno {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_turno")
+    @Column(name = "Id_turno")
     private Long idTurno;
 
     @Column(name = "Fecha_ini")
-    private LocalDate fechaIni;
+private LocalDate fechaIni;
 
-    @Column(name = "Fecha_fin")
-    private LocalDate fechaFin;
+@Column(name = "Fecha_fin")
+private LocalDate fechaFin;
 
     @ManyToOne
-    @JoinColumn(name = "Id_horario")
+    @JoinColumn(name = "id_horario", referencedColumnName = "Id_horario")
     private Horario horario;
+    
+    @OneToMany(mappedBy = "turno")
+    private List<AsignacionTurno> asignaciones;
 
-    @ManyToOne
-    @JoinColumn(name = "Id_usuario")
-    private Usuario usuario;
-
-    // Getters y Setters
-    public Long getIdTurno() {
-        return idTurno;
-    }
-
-    public void setIdTurno(Long idTurno) {
-        this.idTurno = idTurno;
-    }
+    // Getters y setters
+    public Long getIdTurno() { return idTurno; }
+    public void setIdTurno(Long idTurno) { this.idTurno = idTurno; }
 
     public LocalDate getFechaIni() {
         return fechaIni;
@@ -52,19 +46,9 @@ public class Turno {
         this.fechaFin = fechaFin;
     }
 
-    public Horario getHorario() {
-        return horario;
-    }
+    public Horario getHorario() { return horario; }
+    public void setHorario(Horario horario) { this.horario = horario; }
 
-    public void setHorario(Horario horario) {
-        this.horario = horario;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
+    public List<AsignacionTurno> getAsignaciones() { return asignaciones; }
+    public void setAsignaciones(List<AsignacionTurno> asignaciones) { this.asignaciones = asignaciones; }
 }

@@ -1,18 +1,19 @@
 package com.sgturnos.service;
 
 import com.sgturnos.model.Turno;
-import com.sgturnos.model.Usuario;
 import com.sgturnos.repository.TurnoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TurnoServiceImpl implements TurnoService {
 
-    @Autowired
-    private TurnoRepository turnoRepository;
+    private final TurnoRepository turnoRepository;
+
+    public TurnoServiceImpl(TurnoRepository turnoRepository) {
+        this.turnoRepository = turnoRepository;
+    }
 
     @Override
     public List<Turno> listarTodos() {
@@ -20,12 +21,18 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public Turno guardar(Turno turno) {
+    public Turno guardarTurno(Turno turno) {
         return turnoRepository.save(turno);
     }
 
     @Override
-    public List<Turno> obtenerTurnosPorUsuario(Usuario usuario) {
-        return turnoRepository.findByUsuario(usuario);
+    public Turno obtenerPorId(Long id) {
+        Optional<Turno> turno = turnoRepository.findById(id);
+        return turno.orElse(null);
+    }
+
+    @Override
+    public void eliminar(Long id) {
+        turnoRepository.deleteById(id);
     }
 }
