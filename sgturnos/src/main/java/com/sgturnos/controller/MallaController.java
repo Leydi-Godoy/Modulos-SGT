@@ -26,34 +26,39 @@ public class MallaController {
     return archivo;
 }
 
-    @GetMapping("/descargar_malla_pdf")
-    public ResponseEntity<Resource> descargarMallaPdf(@RequestParam("mes") String mes) throws IOException {
-        Path archivo = obtenerArchivo("malla_" + mes + ".pdf");
-        if (!Files.exists(archivo)) {
-            return ResponseEntity.notFound().build();
-        }
+   @GetMapping("/descargar_malla_pdf")
+public ResponseEntity<Resource> descargarMallaPdf(@RequestParam("mes") String mes,
+                                                  @RequestParam("rol") String rol) throws IOException {
+    String sufijo = (rol == null || rol.isBlank() ? "TODOS" : rol.toUpperCase());
+    Path archivo = obtenerArchivo("malla_" + mes + "_" + sufijo + ".pdf");
 
-        Resource resource = new UrlResource(archivo.toUri());
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"malla_" + mes + ".pdf\"")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(resource);
+    if (!Files.exists(archivo)) {
+        return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/descargar_malla_excel")
-    public ResponseEntity<Resource> descargarMallaExcel(@RequestParam("mes") String mes) throws IOException {
-        Path archivo = obtenerArchivo("malla_" + mes + ".xlsx");
-        if (!Files.exists(archivo)) {
-            return ResponseEntity.notFound().build();
-        }
+    Resource resource = new UrlResource(archivo.toUri());
 
-        Resource resource = new UrlResource(archivo.toUri());
+    return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + archivo.getFileName() + "\"")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(resource);
+}
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"malla_" + mes + ".xlsx\"")
-                .contentType(MediaType.parseMediaType(
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                .body(resource);
+@GetMapping("/descargar_malla_excel")
+public ResponseEntity<Resource> descargarMallaExcel(@RequestParam("mes") String mes,
+                                                    @RequestParam("rol") String rol) throws IOException {
+    String sufijo = (rol == null || rol.isBlank() ? "TODOS" : rol.toUpperCase());
+    Path archivo = obtenerArchivo("malla_" + mes + "_" + sufijo + ".xlsx");
+
+    if (!Files.exists(archivo)) {
+        return ResponseEntity.notFound().build();
     }
+
+    Resource resource = new UrlResource(archivo.toUri());
+
+    return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + archivo.getFileName() + "\"")
+            .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+            .body(resource);
+}
 }
