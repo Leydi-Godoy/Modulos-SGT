@@ -4,6 +4,8 @@ import com.sgturnos.model.AsignacionTurno;
 import com.sgturnos.service.PlanificacionTurnosService;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -87,23 +89,35 @@ public class TurnoAdminController {
         return "admin/planificar_turnos";
     }
 
-    // Generar malla automática de turnos
-    @PostMapping("/planificar_turnos/generar")
-    public String generarMalla(@RequestParam String mes,
-                               RedirectAttributes ra) {
-        try {
-            // mes esperado en formato "2025-08"
-            YearMonth yearMonth = YearMonth.parse(mes);
-            planificacionService.generarMalla(yearMonth);
+   // Generar malla automática de turnos (ahora acepta rol opcional)
+@PostMapping("/planificar_turnos/generar")
+public String generarMalla(@RequestParam String mes,
+                           @RequestParam(required = false) String rol,
+                           RedirectAttributes ra) {
+    try {
+        YearMonth yearMonth = YearMonth.parse(mes); // mes puro "yyyy-MM"
 
-            ra.addFlashAttribute("mensaje", "✅ Malla generada correctamente para " + yearMonth);
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "⚠️ Error al generar malla: " + e.getMessage());
+        List<AsignacionTurno> generadas;
+        if (rol != null && !rol.isBlank() && !"TODOS".equalsIgnoreCase(rol)) {
+            generadas = planificacionService.generarMallaPorRol(yearMonth, rol);
+        } else {
+            generadas = planificacionService.generarMalla(yearMonth);
         }
-        return "redirect:/admin/planificar_turnos";
+
+        Map<String, PlanificacionTurnosService.MallaDTO> mallasPorRol =
+                planificacionService.armarMallasPorRol(generadas, yearMonth);
+
+        ra.addFlashAttribute("mensaje", "✅ Malla generada correctamente para " + yearMonth);
+        ra.addFlashAttribute("asignacionesGeneradas", generadas);
+        ra.addFlashAttribute("mallasPorRol", mallasPorRol);
+
+    } catch (Exception e) {
+        ra.addFlashAttribute("error", "⚠️ Error al generar malla: " + e.getMessage());
     }
-    
-    @GetMapping("/dashboard_admin")
+    return "redirect:/admin/planificar_turnos";
+}
+
+@GetMapping("/dashboard_admin")
 public String dashboardAdmin() {
     return "admin/dashboard_admin"; // Asegúrate de tener este archivo HTML
 }
