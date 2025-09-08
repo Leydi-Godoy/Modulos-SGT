@@ -1,12 +1,6 @@
 package com.sgturnos.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -17,15 +11,16 @@ public class AsignacionTurno {
     private AsignacionTurnoPK id;
 
     @ManyToOne
-    @MapsId("idColaborador")
+    @MapsId("Id_colaborador")
     @JoinColumn(name = "Id_colaborador", referencedColumnName = "Id_colaborador")
     private Colaborador colaborador;
 
     @ManyToOne
-    @MapsId("idTurno")
+    @MapsId("Id_turno")
     @JoinColumn(name = "Id_turno", referencedColumnName = "Id_turno")
     private Turno turno;
 
+    // <-- Aquí dejamos que el campo fecha sea solo lectura (mapeado por el PK)
     @Column(name = "fecha", insertable = false, updatable = false)
     private LocalDate fecha;
 
@@ -58,11 +53,20 @@ public class AsignacionTurno {
     }
 
     public LocalDate getFecha() {
+        // Si quieres siempre devolver la fecha del id cuando esté presente:
+        if (fecha == null && id != null) {
+            return id.getFecha();
+        }
         return fecha;
     }
 
     public void setFecha(LocalDate fecha) {
+        // No se usará para insertar (la persistencia la maneja el EmbeddedId),
+        // pero mantenemos el setter para compatibilidad con el código.
         this.fecha = fecha;
+        if (id != null) {
+            id.setFecha(fecha);
+        }
     }
 
     public String getObservaciones() {

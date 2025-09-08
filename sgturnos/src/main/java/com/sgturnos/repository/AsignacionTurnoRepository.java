@@ -9,5 +9,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AsignacionTurnoRepository extends JpaRepository<AsignacionTurno, AsignacionTurnoPK> {
-    List<AsignacionTurno> findByColaborador(Colaborador colaborador); // Cambiado
+    
+    // El método que borra todas las asignaciones de un turno específico
+    void deleteByTurno_IdTurno(Long idTurno);
+    
+    // Otros métodos existentes
+    List<AsignacionTurno> findByColaborador(Colaborador colaborador);
 }

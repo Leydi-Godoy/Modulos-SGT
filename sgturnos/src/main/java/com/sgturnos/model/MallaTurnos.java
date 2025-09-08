@@ -1,37 +1,66 @@
 package com.sgturnos.model;
 
-import java.time.LocalDate;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "malla_turnos")
 public class MallaTurnos {
 
-    private Long idTurno;       // id_turno
-    private Long idUsuario;      // id_usuario
-    private LocalDate fecha;     
-    private String tipoTurno;    // DIA / NOCHE / LIBRE
-    private String comentario;   // observaciones adicionales
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id_malla")
+    private Long idMalla;
+
+    // Relación con Usuario
+    @ManyToOne
+    @JoinColumn(name = "Id_usuario", nullable = false)
+    private Usuario usuario;
+
+    // Relación con Turno
+    @ManyToOne
+    @JoinColumn(name = "Id_turno", nullable = false)
+    private Turno turno;
+
+    @Column(name = "Estado", nullable = false, length = 20)
+    private String estado = "GENERADA";  // valor por defecto
 
     public MallaTurnos() {}
 
-    public MallaTurnos(Long idTurno, Long idUsuario, LocalDate fecha, String tipoTurno, String comentario) {
-        this.idTurno = idTurno;
-        this.idUsuario = idUsuario;
-        this.fecha = fecha;
-        this.tipoTurno = tipoTurno;
-        this.comentario = comentario;
+    public MallaTurnos(Usuario usuario, Turno turno, String estado) {
+        this.usuario = usuario;
+        this.turno = turno;
+        this.estado = estado;
     }
 
-    public Long getIdTurno() { return idTurno; }
-    public void setIdTurno(Long idTurno) { this.idTurno = idTurno; }
+    public Long getIdMalla() {
+        return idMalla;
+    }
 
-    public Long getIdUsuario() { return idUsuario; }
-    public void setIdUsuario(Long idUsuario) { this.idUsuario = idUsuario; }
+    public void setIdMalla(Long idMalla) {
+        this.idMalla = idMalla;
+    }
 
-    public LocalDate getFecha() { return fecha; }
-    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+    public Usuario getUsuario() {
+        return usuario;
+    }
 
-    public String getTipoTurno() { return tipoTurno; }
-    public void setTipoTurno(String tipoTurno) { this.tipoTurno = tipoTurno; }
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
-    public String getComentario() { return comentario; }
-    public void setComentario(String comentario) { this.comentario = comentario; }
+    public Turno getTurno() {
+        return turno;
+    }
+
+    public void setTurno(Turno turno) {
+        this.turno = turno;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 }

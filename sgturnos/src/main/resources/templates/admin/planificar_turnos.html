@@ -42,15 +42,25 @@
             </div>
         </form>
 
-        <!-- 2️⃣ Descargas -->
-        <div class="mt-4">
-            <button type="button" class="btn btn-success" onclick="descargar('excel')">Descargar Malla en Excel</button>
-            <button type="button" class="btn btn-danger" onclick="descargar('pdf')">Descargar Malla en PDF</button>
+        <!-- 2️⃣ Descargas y acciones -->
+        <div class="mt-4 d-flex justify-content-center gap-2 flex-wrap">
+            <button type="button" class="btn btn-success" onclick="descargar('excel')">📗 Descargar Excel</button>
+            <button type="button" class="btn btn-danger" onclick="descargar('pdf')">📕 Descargar PDF</button>
+            <button type="button" class="btn btn-info" onclick="enviarMalla()">✉️ Enviar Malla</button>
+            <button type="button" class="btn btn-warning" onclick="editarMalla()">✏️ Editar Malla</button>
+
+            <!-- 🔹 Nuevo botón para ver mallas guardadas en BD -->
+            <a th:href="@{/admin/mallas}" class="btn btn-outline-light">📋 Ver Mallas Guardadas</a>
         </div>
 
-        <!-- 3️⃣ Mallas por rol -->
-        <div th:if="${mallasPorRol != null}" class="mt-5">
+        <!-- 3️⃣ Espacio para mostrar mallas (cuando existan) -->
+        <div class="mt-5">
             <h3 class="text-info">✅ Mallas generadas por rol:</h3>
+
+            <div th:if="${mallasPorRol == null || #maps.isEmpty(mallasPorRol)}" 
+                 class="alert alert-warning mt-3">
+                No hay mallas generadas todavía.
+            </div>
 
             <div th:each="entry : ${mallasPorRol}" class="mt-4">
                 <h4 class="text-warning">[[${entry.key}]]</h4> <!-- Nombre del rol -->
@@ -71,19 +81,6 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Opciones futuras con botones -->
-                <div class="d-flex justify-content-center gap-2 mt-3 mb-4">
-                    <a th:href="@{'/admin/editar/malla/' + ${entry.key}}" class="btn btn-outline-primary btn-sm">
-                        🔵 Editar malla de [[${entry.key}]]
-                    </a>
-                    <a th:href="@{'/admin/editar/colaborador'}" class="btn btn-outline-secondary btn-sm">
-                        ⚪ Editar colaborador
-                    </a>
-                    <a th:href="@{'/admin/ajustar/turno'}" class="btn btn-outline-warning btn-sm">
-                        🟡 Ajustar turno puntual
-                    </a>
-                </div>
             </div>
         </div>
     </div>
@@ -92,10 +89,10 @@
 <!-- JS de Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Script de descarga -->
+<!-- Script de acciones -->
 <script>
 function descargar(tipo) {
-    const mes = document.getElementById("mes").value; // solo "yyyy-MM"
+    const mes = document.getElementById("mes").value;
     const rol = document.getElementById("rol").value;
 
     if (!mes) { 
@@ -103,10 +100,18 @@ function descargar(tipo) {
         return; 
     }
 
-    // 🚀 ahora siempre pasamos el rol (incluido "TODOS")
     let url = `/sgturnos/admin/descargar_malla_${tipo}?mes=${mes}&rol=${rol}`;
-
     window.location.href = url;
+}
+
+function enviarMalla() {
+    alert("Aquí iría la lógica para enviar la malla por correo o WhatsApp");
+    // Más adelante conectamos con backend
+}
+
+function editarMalla() {
+    alert("Aquí abriremos la vista de edición de la malla");
+    // Más adelante conectamos con backend
 }
 </script>
 
