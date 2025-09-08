@@ -1,6 +1,9 @@
 package com.sgturnos.controller;
 
 import com.sgturnos.model.AsignacionTurno;
+import com.sgturnos.model.MallaTurnos;
+import com.sgturnos.model.Usuario;
+import com.sgturnos.service.MallaTurnosService;
 import com.sgturnos.service.PlanificacionTurnosService;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -21,6 +24,9 @@ public class TurnoAdminController {
 
     @Autowired
     private PlanificacionTurnosService planificacionService;
+    
+    @Autowired
+    private MallaTurnosService mallaTurnosService;
 
     // Página principal de planificación
     @GetMapping("/planificar_turnos")
@@ -106,6 +112,18 @@ public String generarMalla(@RequestParam String mes,
 
         Map<String, PlanificacionTurnosService.MallaDTO> mallasPorRol =
                 planificacionService.armarMallasPorRol(generadas, yearMonth);
+        
+        // Guardar cada asignación como MallaTurnos en la base de datos
+        for (AsignacionTurno asignacion : generadas) {
+            MallaTurnos malla = new MallaTurnos();
+            malla.setMesMalla(mes);
+            malla.setRol(asignacion.getColaborador().getRol().getRol()); // o getNombreRol según tu clase Rol
+            malla.setUsuario(asignacion.getColaborador().getUsuario());
+            malla.setTurno(asignacion.getTurno());
+            malla.setEstado("GENERADA");
+
+            mallaTurnosService.guardar(malla);
+        }
 
         ra.addFlashAttribute("mensaje", "✅ Malla generada correctamente para " + yearMonth);
         ra.addFlashAttribute("asignacionesGeneradas", generadas);

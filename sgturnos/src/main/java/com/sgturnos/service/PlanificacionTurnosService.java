@@ -28,6 +28,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 // Para PDF
 import java.util.regex.Matcher;
 import java.time.YearMonth;
+import com.sgturnos.model.MallaTurnos;
+import com.sgturnos.repository.MallaTurnosRepository;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -56,6 +58,9 @@ public class PlanificacionTurnosService {
 
     @Autowired
     private AsignacionTurnoRepository asignacionRepository;
+    
+    @Autowired
+    private MallaTurnosRepository mallaTurnosRepository;
 
     private static final int HORAS_MES = 192;
     private static final int HORAS_TURNO = 12;
@@ -108,82 +113,97 @@ public class PlanificacionTurnosService {
         asignacionRepository.deleteById(new AsignacionTurnoPK(idTurno, idColaborador, fecha));
     }
 
-    // ===================== Generación de malla mensual =====================
-    public List<AsignacionTurno> generarMalla(YearMonth mes) {
-        List<Colaborador> colaboradores = listarColaboradores();
-        if (colaboradores.isEmpty()) throw new RuntimeException("No hay colaboradores para generar la malla.");
+  // ===================== Generación de malla mensual =====================
+public List<AsignacionTurno> generarMalla(YearMonth mes) {
+    List<Colaborador> colaboradores = listarColaboradores();
+    if (colaboradores.isEmpty()) throw new RuntimeException("No hay colaboradores para generar la malla.");
 
-        Map<String, Horario> horarioPorTipo = listarHorarios()
-                .stream()
-                .collect(Collectors.toMap(h -> safeUpper(h.getTipo()), h -> h, (a, b) -> a));
+    Map<String, Horario> horarioPorTipo = listarHorarios()
+            .stream()
+            .collect(Collectors.toMap(h -> safeUpper(h.getTipo()), h -> h, (a, b) -> a));
 
-        Horario H_DIA = requireHorario(horarioPorTipo, "DIA");
-        Horario H_NOCHE = requireHorario(horarioPorTipo, "NOCHE");
-        Horario H_LIBRE = requireHorario(horarioPorTipo, "LIBRE");
-        Horario H_COMITE = requireHorario(horarioPorTipo, "COMITE");
+    Horario H_DIA = requireHorario(horarioPorTipo, "DIA");
+    Horario H_NOCHE = requireHorario(horarioPorTipo, "NOCHE");
+    Horario H_LIBRE = requireHorario(horarioPorTipo, "LIBRE");
+    Horario H_COMITE = requireHorario(horarioPorTipo, "COMITE");
 
-        Map<String, Integer> idxRol = new HashMap<>();
-        Map<Long, List<AsignacionTurno>> historialPorColaborador = new HashMap<>();
-        colaboradores.forEach(c -> historialPorColaborador.put(c.getIdColaborador(), new ArrayList<>()));
+    Map<String, Integer> idxRol = new HashMap<>();
+    Map<Long, List<AsignacionTurno>> historialPorColaborador = new HashMap<>();
+    colaboradores.forEach(c -> historialPorColaborador.put(c.getIdColaborador(), new ArrayList<>()));
 
-        List<AsignacionTurno> resultado = new ArrayList<>();
+    List<AsignacionTurno> resultado = new ArrayList<>();
 
-        for (int d = 1; d <= mes.lengthOfMonth(); d++) {
-            LocalDate fecha = mes.atDay(d);
+    for (int d = 1; d <= mes.lengthOfMonth(); d++) {
+        LocalDate fecha = mes.atDay(d);
 
-            Set<Long> bloqueadosHoyPorPosturno = new HashSet<>();
+        Set<Long> bloqueadosHoyPorPosturno = new HashSet<>();
 
-            for (Colaborador c : colaboradores) {
-                List<AsignacionTurno> hist = historialPorColaborador.get(c.getIdColaborador());
-                if (!hist.isEmpty()) {
-                    AsignacionTurno ult = hist.get(hist.size() - 1);
-                    if (isTipo(ult.getTurno().getHorario(), "NOCHE")) {
-                        Turno tLibre = getOrCreateTurno(H_LIBRE, fecha);
-                        AsignacionTurno a = crearAsignacion(c, tLibre, fecha, "Posturno automático");
-                        asignacionRepository.save(a);
-                        resultado.add(a);
-                        hist.add(cloneLite(a));
-                        bloqueadosHoyPorPosturno.add(c.getIdColaborador());
-                    }
-                }
-            }
-
-            asignarCuposPorRolParaTurno(fecha, "DIA", H_DIA,
-                    Map.of("MEDICO", 2, "ENFERMERO", 3, "AUXILIAR", 8, "TERAPIA", 2),
-                    colaboradores, historialPorColaborador, idxRol, bloqueadosHoyPorPosturno, resultado);
-
-            asignarCuposPorRolParaTurno(fecha, "NOCHE", H_NOCHE,
-                    Map.of("MEDICO", 1, "ENFERMERO", 2, "AUXILIAR", 8, "TERAPIA", 1),
-                    colaboradores, historialPorColaborador, idxRol, bloqueadosHoyPorPosturno, resultado);
-
-            Set<Long> yaAsignadosHoy = resultado.stream()
-                    .filter(a -> a.getFecha().equals(fecha))
-                    .map(a -> a.getColaborador().getIdColaborador())
-                    .collect(Collectors.toSet());
-
-            for (Colaborador c : colaboradores) {
-                if (!yaAsignadosHoy.contains(c.getIdColaborador())) {
+        for (Colaborador c : colaboradores) {
+            List<AsignacionTurno> hist = historialPorColaborador.get(c.getIdColaborador());
+            if (!hist.isEmpty()) {
+                AsignacionTurno ult = hist.get(hist.size() - 1);
+                if (isTipo(ult.getTurno().getHorario(), "NOCHE")) {
                     Turno tLibre = getOrCreateTurno(H_LIBRE, fecha);
-                    AsignacionTurno a = crearAsignacion(c, tLibre, fecha, "Libre");
+                    AsignacionTurno a = crearAsignacion(c, tLibre, fecha, "Posturno automático");
                     asignacionRepository.save(a);
                     resultado.add(a);
-                    historialPorColaborador.get(c.getIdColaborador()).add(cloneLite(a));
+                    hist.add(cloneLite(a));
+                    bloqueadosHoyPorPosturno.add(c.getIdColaborador());
                 }
             }
         }
 
-        intentarCompletarObjetivoHoras(mes, colaboradores, H_DIA, H_NOCHE, historialPorColaborador, resultado);
-        asignarComiteEnPrimerLibre(mes, colaboradores, H_COMITE, resultado);
+        asignarCuposPorRolParaTurno(fecha, "DIA", H_DIA,
+                Map.of("MEDICO", 2, "ENFERMERO", 3, "AUXILIAR", 8, "TERAPIA", 2),
+                colaboradores, historialPorColaborador, idxRol, bloqueadosHoyPorPosturno, resultado);
 
-        try {
-            generarArchivoPDF(resultado, mes.toString());
-            generarArchivoExcel(resultado, mes.toString());
-        } catch (IOException e) {
-            log.error("Error al generar archivos de malla para {}", mes, e);
+        asignarCuposPorRolParaTurno(fecha, "NOCHE", H_NOCHE,
+                Map.of("MEDICO", 1, "ENFERMERO", 2, "AUXILIAR", 8, "TERAPIA", 1),
+                colaboradores, historialPorColaborador, idxRol, bloqueadosHoyPorPosturno, resultado);
+
+        Set<Long> yaAsignadosHoy = resultado.stream()
+                .filter(a -> a.getFecha().equals(fecha))
+                .map(a -> a.getColaborador().getIdColaborador())
+                .collect(Collectors.toSet());
+
+        for (Colaborador c : colaboradores) {
+            if (!yaAsignadosHoy.contains(c.getIdColaborador())) {
+                Turno tLibre = getOrCreateTurno(H_LIBRE, fecha);
+                AsignacionTurno a = crearAsignacion(c, tLibre, fecha, "Libre");
+                asignacionRepository.save(a);
+                resultado.add(a);
+                historialPorColaborador.get(c.getIdColaborador()).add(cloneLite(a));
+            }
         }
-
-        return resultado;
     }
+
+    intentarCompletarObjetivoHoras(mes, colaboradores, H_DIA, H_NOCHE, historialPorColaborador, resultado);
+    asignarComiteEnPrimerLibre(mes, colaboradores, H_COMITE, resultado);
+
+    try {
+        generarArchivoPDF(resultado, mes.toString());
+        generarArchivoExcel(resultado, mes.toString());
+    } catch (IOException e) {
+        log.error("Error al generar archivos de malla para {}", mes, e);
+    }
+
+    // ===================== Guardar en MallaTurnos =====================
+    for (AsignacionTurno a : resultado) {
+        Colaborador colaborador = a.getColaborador();
+        Turno turno = a.getTurno();
+
+        MallaTurnos malla = new MallaTurnos();
+        malla.setUsuario(colaborador.getUsuario());
+        malla.setTurno(turno);
+        malla.setEstado("GENERADA");
+        malla.setMesMalla(mes.toString());
+        malla.setRol(colaborador.getRol().getRol());
+
+        mallaTurnosRepository.save(malla);
+    }
+
+    return resultado;
+}
     
    // ===================== Generar malla para un rol =====================
 /**
