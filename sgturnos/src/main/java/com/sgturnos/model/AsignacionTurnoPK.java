@@ -15,7 +15,7 @@ public class AsignacionTurnoPK implements Serializable {
     private Long idTurno;
 
     @Column(name = "Id_colaborador")
-    private Long idColaborador;  // Cambiado de String idEmpleado a Long idColaborador
+    private Long idColaborador;
 
     @Column(name = "fecha")
     private LocalDate fecha;

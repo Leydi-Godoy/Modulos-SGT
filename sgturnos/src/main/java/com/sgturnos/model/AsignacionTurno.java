@@ -11,16 +11,20 @@ public class AsignacionTurno {
     private AsignacionTurnoPK id;
 
     @ManyToOne
-    @MapsId("Id_colaborador")
+    @MapsId("idColaborador")
     @JoinColumn(name = "Id_colaborador", referencedColumnName = "Id_colaborador")
     private Colaborador colaborador;
 
     @ManyToOne
-    @MapsId("Id_turno")
+    @MapsId("idTurno")
     @JoinColumn(name = "Id_turno", referencedColumnName = "Id_turno")
     private Turno turno;
 
-    // <-- Aquí dejamos que el campo fecha sea solo lectura (mapeado por el PK)
+    @ManyToOne
+    @JoinColumn(name = "Id_malla", nullable = false)
+    private MallaTurnos malla;
+
+    // fecha viene del PK
     @Column(name = "fecha", insertable = false, updatable = false)
     private LocalDate fecha;
 
@@ -52,8 +56,15 @@ public class AsignacionTurno {
         this.turno = turno;
     }
 
+    public MallaTurnos getMalla() {
+        return malla;
+    }
+
+    public void setMalla(MallaTurnos malla) {
+        this.malla = malla;
+    }
+
     public LocalDate getFecha() {
-        // Si quieres siempre devolver la fecha del id cuando esté presente:
         if (fecha == null && id != null) {
             return id.getFecha();
         }
@@ -61,8 +72,6 @@ public class AsignacionTurno {
     }
 
     public void setFecha(LocalDate fecha) {
-        // No se usará para insertar (la persistencia la maneja el EmbeddedId),
-        // pero mantenemos el setter para compatibilidad con el código.
         this.fecha = fecha;
         if (id != null) {
             id.setFecha(fecha);

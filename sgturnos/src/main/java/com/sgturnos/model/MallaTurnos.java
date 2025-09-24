@@ -1,10 +1,14 @@
 package com.sgturnos.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "malla_turnos")
+@Table(
+    name = "malla_turnos",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"mes_malla", "rol"}) // Evitar duplicados
+)
 public class MallaTurnos {
 
     @Id
@@ -12,38 +16,35 @@ public class MallaTurnos {
     @Column(name = "Id_malla")
     private Long idMalla;
 
-    // Relación con Usuario
     @ManyToOne
-    @JoinColumn(name = "Id_usuario", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "Id_colaborador", referencedColumnName = "Id_colaborador")
+    private Colaborador colaborador;
 
-    // Relación con Turno
     @ManyToOne
-    @JoinColumn(name = "Id_turno", nullable = false)
+    @JoinColumn(name = "Id_turno", referencedColumnName = "Id_turno")
     private Turno turno;
 
     @Column(name = "Estado", nullable = false, length = 20)
     private String estado = "GENERADA";  // valor por defecto
 
-    // Nuevo: mes de la malla en formato "YYYY-MM"
     @Column(name = "mes_malla", nullable = false, length = 7)
-    private String mesMalla;
+    private String mesMalla; // formato YYYY-MM
 
-    // Nuevo: rol asociado a la malla
     @Column(name = "rol", nullable = false, length = 20)
     private String rol;
 
+    @OneToMany(mappedBy = "malla", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AsignacionTurno> asignaciones = new ArrayList<>();
+
     public MallaTurnos() {}
 
-    public MallaTurnos(Usuario usuario, Turno turno, String estado, String mesMalla, String rol) {
-        this.usuario = usuario;
-        this.turno = turno;
+    public MallaTurnos(String estado, String mesMalla, String rol) {
         this.estado = estado;
         this.mesMalla = mesMalla;
         this.rol = rol;
     }
 
-    // Getters y setters
+    // --- Getters y Setters ---
     public Long getIdMalla() {
         return idMalla;
     }
@@ -52,12 +53,12 @@ public class MallaTurnos {
         this.idMalla = idMalla;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Colaborador getColaborador() {
+        return colaborador;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setColaborador(Colaborador colaborador) {
+        this.colaborador = colaborador;
     }
 
     public Turno getTurno() {
@@ -90,5 +91,13 @@ public class MallaTurnos {
 
     public void setRol(String rol) {
         this.rol = rol;
+    }
+
+    public List<AsignacionTurno> getAsignaciones() {
+        return asignaciones;
+    }
+
+    public void setAsignaciones(List<AsignacionTurno> asignaciones) {
+        this.asignaciones = asignaciones;
     }
 }

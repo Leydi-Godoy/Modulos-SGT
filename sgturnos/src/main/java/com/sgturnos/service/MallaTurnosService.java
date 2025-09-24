@@ -1,14 +1,11 @@
 package com.sgturnos.service;
 
-import com.sgturnos.model.MallaTurnos;
-import com.sgturnos.model.Usuario;
-import com.sgturnos.model.Turno;
-import com.sgturnos.repository.AsignacionTurnoRepository;
-import com.sgturnos.repository.MallaTurnosRepository;
-import com.sgturnos.repository.UsuarioRepository;
-import com.sgturnos.repository.TurnoRepository;
+import com.sgturnos.model.*;
+import com.sgturnos.repository.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,37 +13,63 @@ import java.util.Optional;
 public class MallaTurnosService {
 
     private final MallaTurnosRepository mallaTurnosRepository;
-    private final UsuarioRepository usuarioRepository;
+    private final ColaboradorRepository colaboradorRepository;
     private final TurnoRepository turnoRepository;
     private final AsignacionTurnoRepository asignacionTurnoRepository;
 
-public MallaTurnosService(MallaTurnosRepository mallaTurnosRepository,
-                          UsuarioRepository usuarioRepository,
-                          TurnoRepository turnoRepository,
-                          AsignacionTurnoRepository asignacionTurnoRepository) {
-    this.mallaTurnosRepository = mallaTurnosRepository;
-    this.usuarioRepository = usuarioRepository;
-    this.turnoRepository = turnoRepository;
-    this.asignacionTurnoRepository = asignacionTurnoRepository;
-} 
+    public MallaTurnosService(MallaTurnosRepository mallaTurnosRepository,
+                              ColaboradorRepository colaboradorRepository,
+                              TurnoRepository turnoRepository,
+                              AsignacionTurnoRepository asignacionTurnoRepository) {
+        this.mallaTurnosRepository = mallaTurnosRepository;
+        this.colaboradorRepository = colaboradorRepository;
+        this.turnoRepository = turnoRepository;
+        this.asignacionTurnoRepository = asignacionTurnoRepository;
+    }
 
-    // Guardar o actualizar malla
-    public MallaTurnos guardar(MallaTurnos mallaTurnos) {
-        // Buscar Usuario
-        Usuario usuario = usuarioRepository.findById(mallaTurnos.getUsuario().getIdUsuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        // Buscar Turno
-        Turno turno = turnoRepository.findById(mallaTurnos.getTurno().getIdTurno())
+    @Transactional
+    public MallaTurnos generarYMantenerMalla(String mes, String rol) {
+        return mallaTurnosRepository.findByMesMallaAndRol(mes, rol)
+                .orElseGet(() -> {
+                    MallaTurnos nueva = new MallaTurnos("GENERADA", mes, rol);
+                    return mallaTurnosRepository.save(nueva);
+                });
+    }
+
+    @Transactional
+    public MallaTurnos guardar(MallaTurnos malla) {
+        if (malla.getColaborador() != null && malla.getColaborador().getIdColaborador() != null) {
+            malla.setColaborador(
+                colaboradorRepository.findById(malla.getColaborador().getIdColaborador())
+                        .orElseThrow(() -> new RuntimeException("Colaborador no encontrado"))
+            );
+        }
+        if (malla.getTurno() != null && malla.getTurno().getIdTurno() != null) {
+            malla.setTurno(
+                turnoRepository.findById(malla.getTurno().getIdTurno())
+                        .orElseThrow(() -> new RuntimeException("Turno no encontrado"))
+            );
+        }
+        return mallaTurnosRepository.save(malla);
+    }
+
+    @Transactional
+    public void asignarTurno(MallaTurnos malla, Long idColaborador, Long idTurno, LocalDate fecha) {
+        Colaborador colaborador = colaboradorRepository.findById(idColaborador)
+                .orElseThrow(() -> new RuntimeException("Colaborador no encontrado"));
+        Turno turno = turnoRepository.findById(idTurno)
                 .orElseThrow(() -> new RuntimeException("Turno no encontrado"));
 
-       // Borrar asignaciones anteriores del turno
-    asignacionTurnoRepository.deleteByTurno_IdTurno(turno.getIdTurno());
-       
-    // Asignar objetos completos
-        mallaTurnos.setUsuario(usuario);
-        mallaTurnos.setTurno(turno);
+        AsignacionTurnoPK pk = new AsignacionTurnoPK(idTurno, idColaborador, fecha);
 
-        return mallaTurnosRepository.save(mallaTurnos);
+        AsignacionTurno asignacion = new AsignacionTurno();
+        asignacion.setId(pk);
+        asignacion.setColaborador(colaborador);
+        asignacion.setTurno(turno);
+        asignacion.setMalla(malla);
+        asignacion.setFecha(fecha);
+
+        asignacionTurnoRepository.save(asignacion);
     }
 
     public List<MallaTurnos> listar() {
@@ -57,16 +80,9 @@ public MallaTurnosService(MallaTurnosRepository mallaTurnosRepository,
         return mallaTurnosRepository.findById(id);
     }
 
+    @Transactional
     public void eliminar(Long id) {
         mallaTurnosRepository.deleteById(id);
-    }
-
-    public List<MallaTurnos> buscarPorUsuario(Long idUsuario) {
-        return mallaTurnosRepository.findByUsuario_IdUsuario(idUsuario);
-    }
-
-    public List<MallaTurnos> buscarPorTurno(Long idTurno) {
-        return mallaTurnosRepository.findByTurno_IdTurno(idTurno);
     }
 
     public List<MallaTurnos> buscarPorEstado(String estado) {

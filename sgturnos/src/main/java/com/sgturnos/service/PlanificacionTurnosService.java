@@ -189,20 +189,20 @@ public List<AsignacionTurno> generarMalla(YearMonth mes) {
 
     // ===================== Guardar en MallaTurnos =====================
     for (AsignacionTurno a : resultado) {
-        Colaborador colaborador = a.getColaborador();
-        Turno turno = a.getTurno();
+    Colaborador colaborador = a.getColaborador();
+    Turno turno = a.getTurno();
 
-        MallaTurnos malla = new MallaTurnos();
-        malla.setUsuario(colaborador.getUsuario());
-        malla.setTurno(turno);
-        malla.setEstado("GENERADA");
-        malla.setMesMalla(mes.toString());
-        malla.setRol(colaborador.getRol().getRol());
+    MallaTurnos malla = new MallaTurnos();
+    malla.setColaborador(colaborador); // <-- CORRECTO
+    malla.setTurno(turno);
+    malla.setEstado("GENERADA");
+    malla.setMesMalla(mes.toString());
+    malla.setRol(colaborador.getRol().getRol());
 
-        mallaTurnosRepository.save(malla);
-    }
+    mallaTurnosRepository.save(malla);
+}
 
-    return resultado;
+return resultado;
 }
     
    // ===================== Generar malla para un rol =====================
