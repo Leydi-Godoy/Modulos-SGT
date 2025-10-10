@@ -11,13 +11,13 @@ public class AsignacionTurnoPK implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "Id_turno")
+    @Column(name = "Id_turno", nullable = false)
     private Long idTurno;
 
-    @Column(name = "Id_colaborador")
-    private Long idColaborador;  // Cambiado de String idEmpleado a Long idColaborador
+    @Column(name = "Id_colaborador", nullable = false)
+    private Long idColaborador;
 
-    @Column(name = "fecha")
+    @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
     public AsignacionTurnoPK() {}
@@ -28,31 +28,17 @@ public class AsignacionTurnoPK implements Serializable {
         this.fecha = fecha;
     }
 
-    // Getters y Setters
-    public Long getIdTurno() {
-        return idTurno;
-    }
+    // Getters & Setters
+    public Long getIdTurno() { return idTurno; }
+    public void setIdTurno(Long idTurno) { this.idTurno = idTurno; }
 
-    public void setIdTurno(Long idTurno) {
-        this.idTurno = idTurno;
-    }
+    public Long getIdColaborador() { return idColaborador; }
+    public void setIdColaborador(Long idColaborador) { this.idColaborador = idColaborador; }
 
-    public Long getIdColaborador() {
-        return idColaborador;
-    }
+    public LocalDate getFecha() { return fecha; }
+    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
 
-    public void setIdColaborador(Long idColaborador) {
-        this.idColaborador = idColaborador;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
-
+    // Equals & HashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

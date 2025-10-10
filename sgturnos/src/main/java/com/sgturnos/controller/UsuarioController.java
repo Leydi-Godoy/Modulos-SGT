@@ -5,7 +5,9 @@ import com.sgturnos.model.Usuario;
 import com.sgturnos.repository.RolRepository;
 import com.sgturnos.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -43,7 +45,7 @@ public class UsuarioController {
         model.addAttribute("usuarios", usuarioService.findAll());
         return "admin/lista";
     }
-
+    
     @PostMapping
 public String saveUsuario(@ModelAttribute Usuario usuario,
                          @RequestParam(value = "terminos", required = false) String terminos,
@@ -154,4 +156,75 @@ public String saveUsuario(@ModelAttribute Usuario usuario,
         }
         return "redirect:/usuarios";
     }
+    
+    // ---------------------
+// 🔹 ENDPOINTS JSON (para Postman)
+// ---------------------
+
+// Listar todos los usuarios
+@GetMapping("/api")
+@ResponseBody
+public List<Usuario> listarUsuariosJson() {
+    return usuarioService.findAll();
+}
+
+// Obtener un usuario por ID
+@GetMapping("/api/{id}")
+@ResponseBody
+public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable Long id) {
+    Usuario usuario = usuarioService.findById(id);
+    return (usuario != null) ? ResponseEntity.ok(usuario) : ResponseEntity.notFound().build();
+}
+
+// Crear usuario
+@PostMapping("/api")
+@ResponseBody
+public ResponseEntity<Usuario> crearUsuarioJson(@RequestBody Usuario usuario) {
+    if (!esBCrypt(usuario.getContrasena())) {
+        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+    }
+    Usuario nuevo = usuarioService.save(usuario);
+    return ResponseEntity.ok(nuevo);
+}
+
+// Actualizar usuario
+@PutMapping("/api/{id}")
+@ResponseBody
+public ResponseEntity<Usuario> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuarioDetalles) {
+    Usuario usuario = usuarioService.findById(id);
+    if (usuario == null) {
+        return ResponseEntity.notFound().build();
+    }
+
+    usuario.setPrimerNombre(usuarioDetalles.getPrimerNombre());
+    usuario.setSegundoNombre(usuarioDetalles.getSegundoNombre());
+    usuario.setPrimerApellido(usuarioDetalles.getPrimerApellido());
+    usuario.setSegundoApellido(usuarioDetalles.getSegundoApellido());
+    usuario.setCorreo(usuarioDetalles.getCorreo());
+    usuario.setRol(usuarioDetalles.getRol());
+
+    if (usuarioDetalles.getContrasena() != null && !usuarioDetalles.getContrasena().isBlank()) {
+        if (!esBCrypt(usuarioDetalles.getContrasena())) {
+            usuario.setContrasena(passwordEncoder.encode(usuarioDetalles.getContrasena()));
+        } else {
+            usuario.setContrasena(usuarioDetalles.getContrasena());
+        }
+    }
+
+    Usuario actualizado = usuarioService.save(usuario);
+    return ResponseEntity.ok(actualizado);
+}
+
+// Eliminar usuario
+@DeleteMapping("/api/{id}")
+@ResponseBody
+public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
+    try {
+        usuarioService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    } catch (Exception e) {
+        return ResponseEntity.status(500).build();
+    }
+}
+
 }

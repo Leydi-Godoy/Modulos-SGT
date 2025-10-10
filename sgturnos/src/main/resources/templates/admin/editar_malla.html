@@ -9,13 +9,13 @@
 <div class="container mt-5">
     <h2 class="text-center text-warning mb-4">✏️ Editar Malla</h2>
 
-    <form th:action="@{/malla_turnos/guardar}" method="post">
+    <form th:action="@{/malla_turnos/guardar}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="idMalla" th:value="${malla.idMalla}">
 
         <!-- Mes -->
         <div class="mb-3">
             <label for="mes" class="form-label">Mes</label>
-            <input type="month" id="mes" name="mes" th:value="${malla.mes}" class="form-control" required>
+            <input type="month" id="mes" name="mesMalla" th:value="${malla.mesMalla}" class="form-control" required>
         </div>
 
         <!-- Rol -->
@@ -25,6 +25,7 @@
                 <option value="ENFERMERA" th:selected="${malla.rol == 'ENFERMERA'}">Enfermera</option>
                 <option value="MEDICO" th:selected="${malla.rol == 'MEDICO'}">Médico</option>
                 <option value="AUXILIAR" th:selected="${malla.rol == 'AUXILIAR'}">Auxiliar</option>
+                <option value="TERAPIA" th:selected="${malla.rol == 'TERAPIA'}">Terapia</option>
                 <option value="ADMINISTRADOR" th:selected="${malla.rol == 'ADMINISTRADOR'}">Administrador</option>
             </select>
         </div>
@@ -51,6 +52,12 @@
                         th:selected="${malla.turno != null} ? ${turno.idTurno} == ${malla.turno.idTurno} : false">
                 </option>
             </select>
+        </div>
+
+        <!-- Archivo -->
+        <div class="mb-3">
+            <label for="archivo" class="form-label">Archivo (PDF o Excel)</label>
+            <input type="file" id="archivo" name="archivo" class="form-control" accept=".pdf,.xlsx">
         </div>
 
         <!-- Botones -->

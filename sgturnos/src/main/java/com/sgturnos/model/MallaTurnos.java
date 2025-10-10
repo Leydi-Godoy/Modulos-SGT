@@ -1,7 +1,7 @@
 package com.sgturnos.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "malla_turnos")
@@ -12,38 +12,35 @@ public class MallaTurnos {
     @Column(name = "Id_malla")
     private Long idMalla;
 
-    // Relación con Usuario
-    @ManyToOne
-    @JoinColumn(name = "Id_usuario", nullable = false)
-    private Usuario usuario;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", nullable = false, length = 20)
+    private EstadoMalla estado;
 
-    // Relación con Turno
-    @ManyToOne
-    @JoinColumn(name = "Id_turno", nullable = false)
-    private Turno turno;
-
-    @Column(name = "Estado", nullable = false, length = 20)
-    private String estado = "GENERADA";  // valor por defecto
-
-    // Nuevo: mes de la malla en formato "YYYY-MM"
-    @Column(name = "mes_malla", nullable = false, length = 7)
+    @Column(name = "mes_malla", nullable = false, length = 25)
     private String mesMalla;
 
-    // Nuevo: rol asociado a la malla
     @Column(name = "rol", nullable = false, length = 20)
     private String rol;
 
+    @Lob
+    @Column(name = "contenido")
+    private byte[] contenido;
+
+    @Column(name = "fecha_creacion")
+    private LocalDateTime fechaCreacion;
+
+    // ================== Constructores ==================
     public MallaTurnos() {}
 
-    public MallaTurnos(Usuario usuario, Turno turno, String estado, String mesMalla, String rol) {
-        this.usuario = usuario;
-        this.turno = turno;
+    public MallaTurnos(EstadoMalla estado, String mesMalla, String rol, byte[] contenido) {
         this.estado = estado;
         this.mesMalla = mesMalla;
         this.rol = rol;
+        this.contenido = contenido;
+        this.fechaCreacion = LocalDateTime.now(); // puedes quitarlo si quieres permitir null
     }
 
-    // Getters y setters
+    // ================== Getters & Setters ==================
     public Long getIdMalla() {
         return idMalla;
     }
@@ -52,27 +49,11 @@ public class MallaTurnos {
         this.idMalla = idMalla;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Turno getTurno() {
-        return turno;
-    }
-
-    public void setTurno(Turno turno) {
-        this.turno = turno;
-    }
-
-    public String getEstado() {
+    public EstadoMalla getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoMalla estado) {
         this.estado = estado;
     }
 
@@ -90,5 +71,28 @@ public class MallaTurnos {
 
     public void setRol(String rol) {
         this.rol = rol;
+    }
+
+    public byte[] getContenido() {
+        return contenido;
+    }
+
+    public void setContenido(byte[] contenido) {
+        this.contenido = contenido;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    // ================== Enum de Estados ==================
+    public enum EstadoMalla {
+        EDITADA,
+        ENVIADA,
+        GENERADA
     }
 }

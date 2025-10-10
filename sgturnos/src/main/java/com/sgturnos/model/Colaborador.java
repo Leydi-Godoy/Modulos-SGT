@@ -9,17 +9,17 @@ public class Colaborador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_colaborador")
-    private Long idColaborador;   // Cambiado de String idEmpleado a Long idColaborador (autoincremental)
+    private Long idColaborador;
 
     @ManyToOne
-    @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")
-    private Rol rol;
+    @JoinColumn(name = "id_rol", referencedColumnName = "Id_rol") 
+    private Rol rol;   // FK hacia Rol, aunque en BD la columna sea varchar(255)
 
     @OneToOne
-@JoinColumn(name = "Id_usuario", referencedColumnName = "Id_usuario", unique = true)
-private Usuario usuario;
+    @JoinColumn(name = "Id_usuario", referencedColumnName = "Id_usuario", unique = true)
+    private Usuario usuario;  // FK hacia Usuario
 
-    // Getters y setters
+    // Getters y Setters
     public Long getIdColaborador() {
         return idColaborador;
     }
@@ -27,20 +27,20 @@ private Usuario usuario;
     public void setIdColaborador(Long idColaborador) {
         this.idColaborador = idColaborador;
     }
-   
-    public Rol getRol() { 
-        return rol; 
-    }
-    
-    public void setRol(Rol rol) { 
-        this.rol = rol; 
+
+    public Rol getRol() {
+        return rol;
     }
 
-    public Usuario getUsuario() { 
-        return usuario; 
+    public void setRol(Rol rol) {
+        this.rol = rol;
     }
-    
-    public void setUsuario(Usuario usuario) { 
-        this.usuario = usuario; 
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

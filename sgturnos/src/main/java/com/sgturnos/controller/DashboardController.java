@@ -28,6 +28,17 @@ public class DashboardController {
         model.addAttribute("usuario", usuario);
         return "admin/dashboard_admin";
     }
+    
+   // 🔹 Endpoint adicional SOLO para pruebas en Postman
+@GetMapping("/dashboard_admin/api")
+@org.springframework.web.bind.annotation.ResponseBody
+public Usuario mostrarDashboardAdminJson() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    User user = (User) auth.getPrincipal();
+    String username = user.getUsername();
+    return usuarioRepository.findByCorreo(username)
+        .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con correo: " + username));
+} 
 
     @GetMapping("/dashboard_usuario")
     public String mostrarDashboardUsuario(Model model) {
@@ -40,4 +51,16 @@ public class DashboardController {
         model.addAttribute("usuario", usuario);
         return "usuario/dashboard_usuario";
     }
+    
+   // 🔹 Endpoint adicional SOLO para pruebas en Postman
+@GetMapping("/dashboard_usuario/api")
+@org.springframework.web.bind.annotation.ResponseBody
+public Usuario mostrarDashboardUsuarioJson() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    User user = (User) auth.getPrincipal();
+    String username = user.getUsername();
+    return usuarioRepository.findByCorreo(username)
+        .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con correo: " + username));
+}
+
 }

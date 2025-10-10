@@ -23,8 +23,17 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Set<String> roles = AuthorityUtils.authorityListToSet(authorities);
         
+        // Si la petición espera JSON (ej: Postman)
+    String accept = request.getHeader("Accept");
+    if (accept != null && accept.contains("application/json")) {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"message\":\"Login exitoso\",\"roles\":" + roles + "}");
+        return;
+    }
+        
          System.out.println("Login exitoso con roles: " + roles);
-
+         
         if (roles.contains("ROLE_ADMINISTRADOR")) {
             response.sendRedirect("/sgturnos/dashboard_admin");
         } else if (

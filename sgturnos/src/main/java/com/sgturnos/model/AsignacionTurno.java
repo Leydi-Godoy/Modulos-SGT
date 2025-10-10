@@ -11,23 +11,26 @@ public class AsignacionTurno {
     private AsignacionTurnoPK id;
 
     @ManyToOne
-    @MapsId("Id_colaborador")
-    @JoinColumn(name = "Id_colaborador", referencedColumnName = "Id_colaborador")
+    @MapsId("idColaborador") // conecta con la PK compuesta
+    @JoinColumn(name = "Id_colaborador", referencedColumnName = "Id_colaborador", nullable = false)
     private Colaborador colaborador;
 
     @ManyToOne
-    @MapsId("Id_turno")
-    @JoinColumn(name = "Id_turno", referencedColumnName = "Id_turno")
+    @MapsId("idTurno") // conecta con la PK compuesta
+    @JoinColumn(name = "Id_turno", referencedColumnName = "Id_turno", nullable = false)
     private Turno turno;
 
-    // <-- Aquí dejamos que el campo fecha sea solo lectura (mapeado por el PK)
     @Column(name = "fecha", insertable = false, updatable = false)
     private LocalDate fecha;
 
     @Column(name = "observaciones")
     private String observaciones;
 
-    // Getters y setters
+    @ManyToOne
+    @JoinColumn(name = "Id_malla", referencedColumnName = "Id_malla", nullable = false)
+    private MallaTurnos mallaTurnos;
+
+    // ================== Getters & Setters ==================
     public AsignacionTurnoPK getId() {
         return id;
     }
@@ -53,7 +56,6 @@ public class AsignacionTurno {
     }
 
     public LocalDate getFecha() {
-        // Si quieres siempre devolver la fecha del id cuando esté presente:
         if (fecha == null && id != null) {
             return id.getFecha();
         }
@@ -61,8 +63,6 @@ public class AsignacionTurno {
     }
 
     public void setFecha(LocalDate fecha) {
-        // No se usará para insertar (la persistencia la maneja el EmbeddedId),
-        // pero mantenemos el setter para compatibilidad con el código.
         this.fecha = fecha;
         if (id != null) {
             id.setFecha(fecha);
@@ -75,5 +75,13 @@ public class AsignacionTurno {
 
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
+    }
+
+    public MallaTurnos getMallaTurnos() {
+        return mallaTurnos;
+    }
+
+    public void setMallaTurnos(MallaTurnos mallaTurnos) {
+        this.mallaTurnos = mallaTurnos;
     }
 }
